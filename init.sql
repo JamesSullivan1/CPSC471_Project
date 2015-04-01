@@ -40,6 +40,7 @@ CREATE TABLE IF NOT EXISTS cell (
     num             INT             NOT NULL,
     s_num           INT,
 
+    PRIMARY KEY (num,s_num),
     FOREIGN KEY (s_num) REFERENCES section(num)
 );
 
@@ -92,6 +93,16 @@ CREATE TABLE IF NOT EXISTS works (
 
     FOREIGN KEY (d_sin) REFERENCES detainee(sin),
     FOREIGN KEY (t_id) REFERENCES task(id)
+);
+
+CREATE TABLE IF NOT EXISTS livesin (
+    d_sin           CHAR(9),
+    s_num           INT,
+    c_num           INT,
+
+    FOREIGN KEY (d_sin) REFERENCES detainee(sin),
+    FOREIGN KEY (s_num) REFERENCES section(num),
+    FOREIGN KEY (c_num) REFERENCES cell(num)
 );
 
 CREATE TABLE IF NOT EXISTS contact (
