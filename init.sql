@@ -1,21 +1,32 @@
 
-CREATE TABLE IF NOT EXISTS employee (
+CREATE TABLE IF NOT EXISTS people (
+    uname           VARCHAR(64)     UNIQUE NOT NULL,
+    pass            CHAR(40)        NOT NULL,
     fname           VARCHAR(32)     NOT NULL,
     lname           VARCHAR(32)     NOT NULL,
+    sin             CHAR(9)         NOT NULL,
+    birthdate       DATE,
+
+    PRIMARY KEY (sin)
+);
+
+CREATE TABLE IF NOT EXISTS employee (
     sin             CHAR(9),
-    birthdate       DATE            NOT NULL,
     s_sin           CHAR(9),
 
     PRIMARY KEY (sin),
+    FOREIGN KEY (sin) REFERENCES people(sin)
+    ON DELETE CASCADE,
     FOREIGN KEY (s_sin) REFERENCES employee(sin)
     ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS emp_mname (
+CREATE TABLE IF NOT EXISTS mname (
     mname           VARCHAR(32)     NOT NULL,
-    e_sin           CHAR(9),
+    sin             CHAR(9),
 
-    FOREIGN KEY (e_sin) REFERENCES employee(sin)
+    FOREIGN KEY (sin) REFERENCES people(sin)
+    ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS dependent (
@@ -25,6 +36,7 @@ CREATE TABLE IF NOT EXISTS dependent (
     e_sin           CHAR(9),
 
     FOREIGN KEY (e_sin) REFERENCES employee(sin)
+    ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS section (
@@ -34,6 +46,7 @@ CREATE TABLE IF NOT EXISTS section (
 
     PRIMARY KEY (num),
     FOREIGN KEY (w_sin) REFERENCES employee(sin)
+    ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS cell (
@@ -42,6 +55,7 @@ CREATE TABLE IF NOT EXISTS cell (
 
     PRIMARY KEY (num,s_num),
     FOREIGN KEY (s_num) REFERENCES section(num)
+    ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS shift (
@@ -52,8 +66,10 @@ CREATE TABLE IF NOT EXISTS shift (
     s_num           INT,
 
     PRIMARY KEY (e_sin),
-    FOREIGN KEY (e_sin) REFERENCES employee(sin),
+    FOREIGN KEY (e_sin) REFERENCES employee(sin)
+    ON DELETE CASCADE,
     FOREIGN KEY (s_num) REFERENCES section(num)
+    ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS task (
@@ -65,8 +81,10 @@ CREATE TABLE IF NOT EXISTS task (
     s_num           INT,
 
     PRIMARY KEY (id),
-    FOREIGN KEY (s_sin) REFERENCES employee(sin),
+    FOREIGN KEY (s_sin) REFERENCES employee(sin)
+    ON DELETE CASCADE,
     FOREIGN KEY (s_num) REFERENCES section(num)
+    ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS equipment (
@@ -74,13 +92,11 @@ CREATE TABLE IF NOT EXISTS equipment (
     t_id            INT,
 
     FOREIGN KEY (t_id) REFERENCES task(id)
+    ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS detainee (
-    fname           VARCHAR(32)     NOT NULL,
-    lname           VARCHAR(32)     NOT NULL,
     sin             CHAR(9),
-    birthdate       DATE            NOT NULL,
     rel_date        DATE            NOT NULL,
     -- CELL?
 
@@ -91,8 +107,10 @@ CREATE TABLE IF NOT EXISTS works (
     d_sin           CHAR(9),
     t_id            INT,
 
-    FOREIGN KEY (d_sin) REFERENCES detainee(sin),
+    FOREIGN KEY (d_sin) REFERENCES detainee(sin)
+    ON DELETE CASCADE,
     FOREIGN KEY (t_id) REFERENCES task(id)
+    ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS livesin (
@@ -100,9 +118,12 @@ CREATE TABLE IF NOT EXISTS livesin (
     s_num           INT,
     c_num           INT,
 
-    FOREIGN KEY (d_sin) REFERENCES detainee(sin),
-    FOREIGN KEY (s_num) REFERENCES section(num),
+    FOREIGN KEY (d_sin) REFERENCES detainee(sin)
+    ON DELETE CASCADE,
+    FOREIGN KEY (s_num) REFERENCES section(num)
+    ON DELETE CASCADE,
     FOREIGN KEY (c_num) REFERENCES cell(num)
+    ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS contact (
@@ -112,4 +133,6 @@ CREATE TABLE IF NOT EXISTS contact (
     d_sin           CHAR(9),
 
     FOREIGN KEY (d_sin) REFERENCES detainee(sin)
+    ON DELETE CASCADE
 );
+
