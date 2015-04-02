@@ -56,6 +56,7 @@ if ($auth == false) {
 <img src="a4.gif"/>
 <br>
 <br>
+<center>
 <a href='logout.php'>Logout</a>
 </center>
 

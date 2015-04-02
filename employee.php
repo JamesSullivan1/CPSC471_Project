@@ -32,6 +32,8 @@ if ($auth == false) {
 <img src="animated-traffic-cop-directing-traffic.gif"/>
 <br>
 <br>
+<center>
+<br>
 <a href='logout.php'>Logout</a>
 </center>
 
