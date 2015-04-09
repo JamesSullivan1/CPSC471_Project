@@ -37,6 +37,9 @@ if ($auth == false) {
 <form method="post" action="shift.php" >
     <input type="submit" value="Shift Management"/>
 </form>
+<form method="post" action="viewdetainees.php" >
+    <input type="submit" value="View Detainees"/>
+</form>
 <br>
 <a href='logout.php'>Logout</a>
 </center>
