@@ -1,3 +1,9 @@
+<html>
+    <link rel="stylesheet" href="bootstrap.css" media="screen">
+    <head>
+        <title>Member's Page!!!!!!1</title>		
+    </head>
+        <body bgcolor="#FFFFCC">
 <?php  
 
 session_start();
@@ -42,44 +48,27 @@ function getUserType($username) {
     return "detainee";
 }
 
-function roleExceeds($role, $required)
-{
-    if (isEmployee($role)) {
-        if (isWarden($role)) {
-            return true;
-        }
-        return (!isWarden($required));
+if (isset($_SESSION['username'])) {
+    $username = $_SESSION['username'];
+    $usertype = getUserType($username);
+    $_SESSION['usertype'] = $usertype;
+    if ($usertype == "warden") {
+        header("Location: warden.php");
     }
-    return false;
-}
-
-function supervises($emp1, $emp2)
-{
-    $query = "SELECT * FROM 
-                (SELECT E.ssin FROM employee E, people P WHERE (
-                 P.uname = '$emp2' AND E.sin = P.sin)) NATURAL JOIN 
-                (SELECT E.sin FROM employee E, people P WHERE (
-                 P.uname = '$emp1' AND E.sin = P.sin))"
-    $result = mysqli_query($con,$query) or die(mysqli_error($con));
-    $count = mysqli_num_rows($result);
-    if ($count == 1) {
-        return true;
+    else if ($usertype == "employee") {
+        header("Location: employee.php");
+    } else {
+        header("Location: detainee.php");
     }
-    return false;
-}
-
-function get_sin($uname)
-{
-    $query = "SELECT sin FROM employee E, people P WHERE
-              P.uname = '$uname' AND E.sin = P.sin";
-    $result = mysqli_query($con,$query) or die(mysqli_error($con));
-    $count = mysqli_num_rows($result);
-    if ($count == 1) {
-        return $result->fetch_row()[0];
-    }
-    return null;
-
-}
+    echo "Hai " . $username . "<br>";
+    echo "Ur a great " . $usertype . "<br>";
+    echo "This is the Members Area <br>";
+    echo "<a href='logout.php'>Logout</a>"; 
+}else{
+    header("Location: login.php");
+} 
 
 ?>
+ </body>
+</html>
 

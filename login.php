@@ -20,7 +20,7 @@ function authenticate() {
         $count = mysqli_num_rows($result);
         if ($count == 1){
             $_SESSION['username'] = $username;
-            header("Location: member.php");
+            header("Location: memberpage.php");
             return true;
         }else{
             return false;

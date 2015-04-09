@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS shift (
     e_sin           CHAR(9),
     s_num           INT,
 
-    PRIMARY KEY (e_sin),
+    PRIMARY KEY (e_sin,start),
     FOREIGN KEY (e_sin) REFERENCES employee(sin)
     ON DELETE CASCADE,
     FOREIGN KEY (s_num) REFERENCES section(num)
