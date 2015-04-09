@@ -1,9 +1,7 @@
 <html>
     <link rel="stylesheet" href="bootstrap.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="jquery.datetimepicker.css"/>
     <head>
-<link rel="stylesheet" type="text/css" href="jquery.datetimepicker.css"/>
-<script src="jquery.js"></script>
-<script src="jquery.datetimepicker.js"></script>
         <title>Shift Management</title>		
     </head>
         <body bgcolor="#FFFFCC">
@@ -117,11 +115,12 @@ if (isset($_POST['addingshift'])) {
     </tr>
     <tr>
     <td><b>Start Time</b></td>
-    <td><input name="sdate" type="text" id="datetimepicker"></input></td>
+    <td><input name="sdate" type="text" class="datetimepicker"></input></td>
     </tr> <br/>
     <tr>
+
     <td><b>End Time</b></td>
-    <td><input name="edate" type="text" id="datetimepicker"></input></td>
+    <td><input name="edate" type="text" class="datetimepicker"></input></td>
     </tr> <br/>
     <tr>
     <td><b>Section Number</b></td>
@@ -145,3 +144,13 @@ if (isset($_POST['addingshift'])) {
 <br>
 <a href='member.php'>Go Back</a>
 </center>
+<script src="jquery.js"></script>
+<script src="jquery.datetimepicker.js"></script>
+<script>
+$('.datetimepicker').datetimepicker({
+dayOfWeekStart : 1,
+lang:'en'
+});
+$('.datetimepicker').datetimepicker();
+</script>
+
