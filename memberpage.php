@@ -16,7 +16,7 @@ function isWarden($username) {
     }
     $query = "SELECT * FROM people P, employee E, section S WHERE ( 
                     P.uname = '$username' AND
-                    P.sin = E.sin AND
+                    P.uname = E.uname AND
                     E.sin = S.w_sin)";
     $result = mysqli_query($con,$query) or die(mysqli_error($con));
     $count = mysqli_num_rows($result);
@@ -29,7 +29,7 @@ function isWarden($username) {
 function isEmployee($username) {
     global $con;
     $query = "SELECT * FROM employee E,people P WHERE (
-                    P.uname = '$username' AND E.sin = P.sin)";
+                    P.uname = '$username' AND E.uname = P.uname)";
     $result = mysqli_query($con,$query) or die(mysqli_error($con));
     $count = mysqli_num_rows($result);
     if ($count == 1) {

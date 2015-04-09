@@ -12,7 +12,7 @@ function timeLeft($uname) {
     global $con;
     $query = "SELECT rel_date FROM detainee D, people P WHERE (
                 P.uname = '$uname' AND
-                P.sin = D.sin)";
+                P.uname = D.uname)";
     $result = mysqli_query($con,$query) or die(mysqli_error($con));
     $res = $result->fetch_row()[0];
     $cdate = new DateTime();

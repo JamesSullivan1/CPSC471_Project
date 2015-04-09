@@ -9,7 +9,7 @@ function isWarden($username) {
     }
     $query = "SELECT * FROM people P, employee E, section S WHERE ( 
                     P.uname = '$username' AND
-                    P.sin = E.sin AND
+                    P.uname = E.uname AND
                     E.sin = S.w_sin)";
     $result = mysqli_query($con,$query) or die(mysqli_error($con));
     $count = mysqli_num_rows($result);
@@ -22,7 +22,7 @@ function isWarden($username) {
 function isEmployee($username) {
     global $con;
     $query = "SELECT * FROM employee E,people P WHERE (
-                    P.uname = '$username' AND E.sin = P.sin)";
+                    P.uname = '$username' AND E.uname = P.uname)";
     $result = mysqli_query($con,$query) or die(mysqli_error($con));
     $count = mysqli_num_rows($result);
     if ($count == 1) {
@@ -43,22 +43,24 @@ function getUserType($username) {
 
 function roleExceeds($role, $required)
 {
-    if (isEmployee($role)) {
-        if (isWarden($role)) {
-            return true;
-        }
-        return (!isWarden($required));
+    if ($required == "employee") {
+        return ($role == "employee" || $role == "warden");
+    } else if ($required == "warden") {
+        return $role == "warden";
     }
     return false;
 }
 
 function supervises($emp1, $emp2)
 {
+    global $con;
     $query = "SELECT * FROM 
-                (SELECT E.ssin FROM employee E, people P WHERE (
-                 P.uname = '$emp2' AND E.sin = P.sin)) NATURAL JOIN 
-                (SELECT E.sin FROM employee E, people P WHERE (
-                 P.uname = '$emp1' AND E.sin = P.sin))";
+                ((SELECT E.s_sin FROM employee E, people P WHERE (
+                 P.uname = '$emp2' AND E.uname = P.uname)) AS t1 
+                 NATURAL JOIN 
+                 (SELECT E.sin FROM employee E, people P WHERE (
+                 P.uname = '$emp1' AND E.uname = P.uname)) AS t2
+                )";
     $result = mysqli_query($con,$query) or die(mysqli_error($con));
     $count = mysqli_num_rows($result);
     if ($count == 1) {
@@ -69,8 +71,9 @@ function supervises($emp1, $emp2)
 
 function get_sin($uname)
 {
+    global $con;
     $query = "SELECT sin FROM employee E, people P WHERE
-              P.uname = '$uname' AND E.sin = P.sin";
+              P.uname = '$uname' AND E.uname = P.uname";
     $result = mysqli_query($con,$query) or die(mysqli_error($con));
     $count = mysqli_num_rows($result);
     if ($count == 1) {

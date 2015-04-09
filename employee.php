@@ -33,10 +33,10 @@ if ($auth == false) {
 </center>
 <br>
 <br>
+<center>
 <form method="post" action="shift.php" >
     <input type="submit" value="Shift Management"/>
 </form>
-<center>
 <br>
 <a href='logout.php'>Logout</a>
 </center>

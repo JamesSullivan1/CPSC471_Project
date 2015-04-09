@@ -54,9 +54,13 @@ if ($auth == false) {
 <img src="a4.gif"/>
 <h1 style="display:inline">Warden Page</h>
 <img src="a4.gif"/>
+</center>
 <br>
 <br>
 <center>
+<form method="post" action="shift.php" >
+    <input type="submit" value="Shift Management"/>
+</form>
 <a href='logout.php'>Logout</a>
 </center>
 

@@ -4,18 +4,18 @@ CREATE TABLE IF NOT EXISTS people (
     pass            CHAR(40)        NOT NULL,
     fname           VARCHAR(32)     NOT NULL,
     lname           VARCHAR(32)     NOT NULL,
-    sin             CHAR(9)         NOT NULL,
-    birthdate       DATE,
+    birthdate       DATETIME,
 
-    PRIMARY KEY (sin)
+    PRIMARY KEY (uname)
 );
 
 CREATE TABLE IF NOT EXISTS employee (
     sin             CHAR(9),
     s_sin           CHAR(9),
+    uname           VARCHAR(64)     UNIQUE NOT NULL,
 
     PRIMARY KEY (sin),
-    FOREIGN KEY (sin) REFERENCES people(sin)
+    FOREIGN KEY (uname) REFERENCES people(uname)
     ON DELETE CASCADE,
     FOREIGN KEY (s_sin) REFERENCES employee(sin)
     ON DELETE CASCADE
@@ -23,15 +23,15 @@ CREATE TABLE IF NOT EXISTS employee (
 
 CREATE TABLE IF NOT EXISTS mname (
     mname           VARCHAR(32)     NOT NULL,
-    sin             CHAR(9),
+    uname           CHAR(9),
 
-    FOREIGN KEY (sin) REFERENCES people(sin)
+    FOREIGN KEY (uname) REFERENCES people(uname)
     ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS dependent (
     name            VARCHAR(64)     NOT NULL,
-    birthdate       DATE,
+    birthdate       DATETIME,
     relship         VARCHAR(16)     NOT NULL,
     e_sin           CHAR(9),
 
@@ -60,8 +60,8 @@ CREATE TABLE IF NOT EXISTS cell (
 
 CREATE TABLE IF NOT EXISTS shift (
     req_role        VARCHAR(10),
-    start           DATE            NOT NULL,
-    end             DATE            NOT NULL,
+    start           DATETIME            NOT NULL,
+    end             DATETIME            NOT NULL,
     e_sin           CHAR(9),
     s_num           INT,
 
@@ -75,8 +75,8 @@ CREATE TABLE IF NOT EXISTS shift (
 CREATE TABLE IF NOT EXISTS task (
     id              INT,
     descr           VARCHAR(512),
-    start           DATE            NOT NULL,
-    end             DATE            NOT NULL,
+    start           DATETIME            NOT NULL,
+    end             DATETIME            NOT NULL,
     s_sin           CHAR(9),
     s_num           INT,
 
@@ -97,10 +97,13 @@ CREATE TABLE IF NOT EXISTS equipment (
 
 CREATE TABLE IF NOT EXISTS detainee (
     sin             CHAR(9),
-    rel_date        DATE            NOT NULL,
+    rel_date        DATETIME            NOT NULL,
+    uname           VARCHAR(64)     UNIQUE NOT NULL,
     -- CELL?
 
-    PRIMARY KEY (sin)
+    PRIMARY KEY (sin),
+    FOREIGN KEY (uname) REFERENCES people(uname) 
+    ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS works (
@@ -128,7 +131,7 @@ CREATE TABLE IF NOT EXISTS livesin (
 
 CREATE TABLE IF NOT EXISTS contact (
     name            VARCHAR(64)     NOT NULL,
-    birthdate       DATE,
+    birthdate       DATETIME,
     relship         VARCHAR(16)     NOT NULL,
     d_sin           CHAR(9),
 
