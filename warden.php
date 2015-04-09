@@ -58,8 +58,8 @@ if ($auth == false) {
 <br>
 <br>
 <center>
-<form method="post" action="shift.php" >
-    <input type="submit" value="Shift Management"/>
+<form method="post" action="viewemployees.php" >
+    <input type="submit" value="View Employees"/>
 </form>
 <form method="post" action="viewdetainees.php" >
     <input type="submit" value="View Detainees"/>

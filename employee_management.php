@@ -63,7 +63,7 @@ function addEmployee($uname, $pass, $fname, $lname, $birthdate, $sin, $s_uname)
     }
 
     /* Okay, update the table */
-    $query = "INSERT INTO people VALUES ('$uname', '$pass', '$fname', 
+    $query = "INSERT INTO people VALUES ('$uname', SHA1('$pass'), '$fname', 
         '$lname', '$birthdate')";
     $result = mysqli_query($con,$query) or die(mysqli_error($con));
     $query = "INSERT INTO employee VALUES ('$sin', '$s_sin', '$uname')"; 
@@ -114,7 +114,7 @@ function updateEmployee($uname, $pass, $fname, $lname, $birthdate, $sin, $s_unam
     }
 
     /* Okay, update the table */
-    $query = "UPDATE people SET uname='$uname', pass='$pass', fname='$fname', 
+    $query = "UPDATE people SET uname='$uname', pass=SHA1('$pass'), fname='$fname', 
         lname='$lname', birthdate='$birthdate' WHERE uname = '$uname'";
     $result = mysqli_query($con,$query) or die(mysqli_error($con));
     $query = "UPDATE employee SET uname='$uname', sin='$sin', s_sin='$s_sin' 

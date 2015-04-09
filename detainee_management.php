@@ -30,7 +30,7 @@ function addDetainee($uname, $pass, $fname, $lname, $birthdate, $rel_date)
     }
 
     /* Okay, update the table */
-    $query = "INSERT INTO people VALUES ('$uname', '$pass', '$fname', 
+    $query = "INSERT INTO people VALUES ('$uname', SHA1('$pass'), '$fname', 
         '$lname', '$birthdate')";
     $result = mysqli_query($con,$query) or die(mysqli_error($con));
     $query = "INSERT INTO detainee VALUES ('$uname', '$rel_date')"; 
@@ -70,7 +70,7 @@ function updateDetainee($uname, $pass, $fname, $lname, $birthdate, $rel_date)
     }
 
     /* Okay, update the table */
-    $query = "UPDATE people SET uname='$uname', pass='$pass', fname='$fname', 
+    $query = "UPDATE people SET uname='$uname', pass=SHA1('$pass'), fname='$fname', 
         lname='$lname', birthdate='$birthdate' WHERE uname = '$uname'";
     $result = mysqli_query($con,$query) or die(mysqli_error($con));
     $query = "UPDATE detainee SET uname='$uname', rel_date='$rel_date' 
