@@ -16,6 +16,7 @@ $err = "";
 function addDetainee($uname, $pass, $fname, $lname, $birthdate, $rel_date)
 {
     global $con;
+    global $err;
     /* Get the current user creds */
     if (!isset($_SESSION['username'])) {
         die();
@@ -40,11 +41,19 @@ function addDetainee($uname, $pass, $fname, $lname, $birthdate, $rel_date)
 function updateDetainee($uname, $pass, $fname, $lname, $birthdate, $rel_date)
 {
     global $con;
+    global $err;
     /* Get the current user creds */
     if (!isset($_SESSION['username'])) {
         die();
         return false;
     }
+
+    if (empty($uname) || empty($pass) || empty($fname) || empty($lname) ||
+        empty($rel_date)) {
+        $err = "Not enough arguments given.";
+        return false;
+    }
+
     /* Verify the credentials of the adder */
     $cuname = $_SESSION['username'];
     if (!isWarden($cuname)) {
@@ -52,19 +61,19 @@ function updateDetainee($uname, $pass, $fname, $lname, $birthdate, $rel_date)
         return false;
     }
     /* Make sure there's actually a detainee there */
-    $query = "SELECT * FROM people P, detainee D WHERE D.uname = '$uname'";
+    $query = "SELECT * FROM detainee D WHERE D.uname = '$uname'";
     $result = mysqli_query($con,$query) or die(mysqli_error($con));
     $count = mysqli_num_rows($result);
     if ($count != 1) {
-        $err = "No detainee with that username found";
+        $err = $uname."No detainee with that username found";
         return false;
     }
 
     /* Okay, update the table */
-    $query = "UPDATE people VALUES ('$uname', '$pass', '$fname', 
-        '$lname', '$birthdate') WHERE uname = '$uname'";
+    $query = "UPDATE people SET uname='$uname', pass='$pass', fname='$fname', 
+        lname='$lname', birthdate='$birthdate' WHERE uname = '$uname'";
     $result = mysqli_query($con,$query) or die(mysqli_error($con));
-    $query = "UPDATE detainee VALUES ('$uname', '$rel_date') 
+    $query = "UPDATE detainee SET uname='$uname', rel_date='$rel_date' 
         WHERE uname = '$uname'"; 
     $result = mysqli_query($con,$query) or die(mysqli_error($con));
     return true;
@@ -73,6 +82,7 @@ function updateDetainee($uname, $pass, $fname, $lname, $birthdate, $rel_date)
 function removeDetainee($uname)
 {
     global $con;
+    global $err;
     /* Get the current user creds */
     if (!isset($_SESSION['username'])) {
         die();
@@ -86,11 +96,11 @@ function removeDetainee($uname)
     }
 
     /* Check that they're actually a detainee */
-    $query = "SELECT * FROM people P, detainee D WHERE D.uname = '$uname'";
+    $query = "SELECT * FROM detainee D WHERE D.uname = '$uname'";
     $result = mysqli_query($con,$query) or die(mysqli_error($con));
     $count = mysqli_num_rows($result);
     if ($count != 1) {
-        $err = "No detainee with that username found";
+        $err = $uname."No detainee with that username found";
         return false;
     }
     /* Okay, update the table */
@@ -108,13 +118,19 @@ if (!isset($_POST['username'])) {
     header("Location: viewdetainee.php");
     die();
 }
+if (!empty($err)) {
+    echo($err);
+}
+
 $dn = $_POST['username'];
 
 if (isset($_POST['addingdetainee'])) {
     addDetainee($_POST['username'],$_POST['pass'],$_POST['fname'],
         $_POST['lname'], $_POST['bdate'], $_POST['rdate']);
 } else if (isset($_POST['removingdetainee'])) {
-    removeDetainee($_POST['username']);
+    if(removeDetainee($_POST['username'])) {
+        header("Location: viewdetainee.php");
+    }
 } else if (isset($_POST['updatingdetainee'])) {
     updateDetainee($_POST['username'],$_POST['pass'],$_POST['fname'],
         $_POST['lname'], $_POST['bdate'], $_POST['rdate']);
@@ -126,19 +142,14 @@ if (isset($_POST['addingdetainee'])) {
 </center>
 <br>
 <br>
-<?php
-if (!empty($err)) {
-    echo($err);
-}
-?>
 <br>
 <center>
-<b>Update Detainee</b>
+<b>Update Detainee <?php echo($dn) ?></b>
 <form method="post" action="detainee_management.php" >
     <table border="0" >
     <tr>
     <td><b>Password</b></td>
-    <td><input name="edate" type="password"></input></td>
+    <td><input name="pass" type="password"></input></td>
     </tr> <br/>
 
     <tr>
@@ -168,9 +179,9 @@ if (!empty($err)) {
     </table>
     </form>
 <form method="post" action="detainee_management.php" >
-<input type="submit" value="Remove Detainee"/>
-<input type="hidden" name="removingshift"/>
+<input type="hidden" name="removingdetainee"/>
 <input type="hidden" name="username" value="<?php echo($dn) ?>"/>
+<input type="submit" value="Remove Detainee"/>
 </form>
 <br>
 <?php
