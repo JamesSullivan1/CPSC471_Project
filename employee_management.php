@@ -2,7 +2,7 @@
     <link rel="stylesheet" href="bootstrap.css" media="screen">
     <link rel="stylesheet" type="text/css" href="jquery.datetimepicker.css"/>
     <head>
-        <title>Detainee Management</title>		
+        <title>Employee Management</title>		
     </head>
         <body bgcolor="#FFFFCC">
 <?php
@@ -13,7 +13,7 @@ require_once 'member.php';
 
 $err = "";
 
-function addDetainee($uname, $pass, $fname, $lname, $birthdate, $rel_date)
+function addEmployee($uname, $pass, $fname, $lname, $birthdate, $sin, $s_uname)
 {
     global $con;
     global $err;
@@ -22,10 +22,43 @@ function addDetainee($uname, $pass, $fname, $lname, $birthdate, $rel_date)
         die();
         return false;
     }
+    if (empty($uname) || empty($pass) || empty($fname) || empty($lname) ||
+        empty($sin)) {
+        $err = "Not enough arguments given.";
+        return false;
+    }
+
     /* Verify the credentials of the adder */
     $cuname = $_SESSION['username'];
     if (!isWarden($cuname)) {
-        $err = "Only wardens can add detainees";
+        $err = "Only wardens can add employees";
+        return false;
+    }
+
+    /* Verify the supervisor is a real person */
+    $query = "SELECT sin FROM employee WHERE uname = '$s_uname'";
+    $result = mysqli_query($con,$query) or die(mysqli_error($con));
+    $count = mysqli_num_rows($result);
+    if ($count != 1) {
+        $err = "No supervisor with username " .$s_uname ."found";
+        return false;
+    }
+    $s_sin = $result->fetch_row()[0];
+
+
+    /* Verify the supervisor is a real person */
+    $query = "SELECT sin FROM employee WHERE uname = '$s_uname'";
+    $result = mysqli_query($con,$query) or die(mysqli_error($con));
+    $count = mysqli_num_rows($result);
+    if ($count != 1) {
+        $err = "No supervisor with username " .$s_uname ."found";
+        return false;
+    }
+    $s_sin = $result->fetch_row()[0];
+
+    $cuname = $_SESSION['username'];
+    if (!isWarden($cuname)) {
+        $err = "Only wardens can add employees";
         return false;
     }
 
@@ -33,12 +66,12 @@ function addDetainee($uname, $pass, $fname, $lname, $birthdate, $rel_date)
     $query = "INSERT INTO people VALUES ('$uname', '$pass', '$fname', 
         '$lname', '$birthdate')";
     $result = mysqli_query($con,$query) or die(mysqli_error($con));
-    $query = "INSERT INTO detainee VALUES ('$uname', '$rel_date')"; 
+    $query = "INSERT INTO employee VALUES ('$sin', '$s_sin', '$uname')"; 
     $result = mysqli_query($con,$query) or die(mysqli_error($con));
     return true;
 }
 
-function updateDetainee($uname, $pass, $fname, $lname, $birthdate, $rel_date)
+function updateEmployee($uname, $pass, $fname, $lname, $birthdate, $sin, $s_uname)
 {
     global $con;
     global $err;
@@ -49,7 +82,7 @@ function updateDetainee($uname, $pass, $fname, $lname, $birthdate, $rel_date)
     }
 
     if (empty($uname) || empty($pass) || empty($fname) || empty($lname) ||
-        empty($rel_date)) {
+        empty($sin)) {
         $err = "Not enough arguments given.";
         return false;
     }
@@ -57,15 +90,26 @@ function updateDetainee($uname, $pass, $fname, $lname, $birthdate, $rel_date)
     /* Verify the credentials of the adder */
     $cuname = $_SESSION['username'];
     if (!isWarden($cuname)) {
-        $err = "Only wardens can add detainees";
+        $err = "Only wardens can add employees";
         return false;
     }
-    /* Make sure there's actually a detainee there */
-    $query = "SELECT * FROM detainee D WHERE D.uname = '$uname'";
+
+    /* Verify the supervisor is a real person */
+    $query = "SELECT sin FROM employee WHERE uname = '$s_uname'";
     $result = mysqli_query($con,$query) or die(mysqli_error($con));
     $count = mysqli_num_rows($result);
     if ($count != 1) {
-        $err = $uname."No detainee with that username found";
+        $err = "No supervisor with username " .$s_uname ."found";
+        return false;
+    }
+    $s_sin = $result->fetch_row()[0];
+
+    /* Make sure there's actually an employee there */
+    $query = "SELECT * FROM employee E WHERE E.uname = '$uname'";
+    $result = mysqli_query($con,$query) or die(mysqli_error($con));
+    $count = mysqli_num_rows($result);
+    if ($count != 1) {
+        $err = "No employee with username " .$uname." found";
         return false;
     }
 
@@ -73,13 +117,13 @@ function updateDetainee($uname, $pass, $fname, $lname, $birthdate, $rel_date)
     $query = "UPDATE people SET uname='$uname', pass='$pass', fname='$fname', 
         lname='$lname', birthdate='$birthdate' WHERE uname = '$uname'";
     $result = mysqli_query($con,$query) or die(mysqli_error($con));
-    $query = "UPDATE detainee SET uname='$uname', rel_date='$rel_date' 
+    $query = "UPDATE employee SET uname='$uname', sin='$sin', s_sin='$s_sin' 
         WHERE uname = '$uname'"; 
     $result = mysqli_query($con,$query) or die(mysqli_error($con));
     return true;
 }
 
-function removeDetainee($uname)
+function removeEmployee($uname)
 {
     global $con;
     global $err;
@@ -91,16 +135,16 @@ function removeDetainee($uname)
     /* Verify the credentials of the adder */
     $cuname = $_SESSION['username'];
     if (!isWarden($cuname)) {
-        $err = "Only wardens can remove detainees";
+        $err = "Only wardens can remove employees";
         return false;
     }
 
-    /* Check that they're actually a detainee */
-    $query = "SELECT * FROM detainee D WHERE D.uname = '$uname'";
+    /* Check that they're actually an employee */
+    $query = "SELECT * FROM employee E WHERE E.uname = '$uname'";
     $result = mysqli_query($con,$query) or die(mysqli_error($con));
     $count = mysqli_num_rows($result);
     if ($count != 1) {
-        $err = $uname."No detainee with that username found";
+        $err = "No employee with username ".$uname." found";
         return false;
     }
     /* Okay, update the table */
@@ -115,7 +159,7 @@ if ($auth == false) {
     die();
 }
 if (!isset($_POST['username'])) {
-    header("Location: viewdetainees.php");
+    header("Location: viewemployees.php");
     die();
 }
 if (!empty($err)) {
@@ -124,28 +168,28 @@ if (!empty($err)) {
 
 $dn = $_POST['username'];
 
-if (isset($_POST['addingdetainee'])) {
-    addDetainee($_POST['username'],$_POST['pass'],$_POST['fname'],
-        $_POST['lname'], $_POST['bdate'], $_POST['rdate']);
-} else if (isset($_POST['removingdetainee'])) {
-    if(removeDetainee($_POST['username'])) {
-        header("Location: viewdetainees.php");
+if (isset($_POST['addingemployee'])) {
+    addEmployee($_POST['username'],$_POST['pass'],$_POST['fname'],
+        $_POST['lname'], $_POST['bdate'], $_POST['sin'], $_POST['s_uname']);
+} else if (isset($_POST['removingemployee'])) {
+    if(removeEmployee($_POST['username'])) {
+        header("Location: viewemployees.php");
     }
-} else if (isset($_POST['updatingdetainee'])) {
-    updateDetainee($_POST['username'],$_POST['pass'],$_POST['fname'],
-        $_POST['lname'], $_POST['bdate'], $_POST['rdate']);
+} else if (isset($_POST['updatingemployee'])) {
+    updateEmployee($_POST['username'],$_POST['pass'],$_POST['fname'],
+        $_POST['lname'], $_POST['bdate'], $_POST['sin'], $_POST['s_uname']);
 }
 
 ?>
 <center>
-<h1 style="display:inline">Detainee Management</h>
+<h1 style="display:inline">Employee Management</h>
 </center>
 <br>
 <br>
 <br>
 <center>
-<b>Update Detainee <?php echo($dn) ?></b>
-<form method="post" action="detainee_management.php" >
+<b>Update Employee <?php echo($dn) ?></b>
+<form method="post" action="employee_management.php" >
     <table border="0" >
     <tr>
     <td><b>Password</b></td>
@@ -163,8 +207,13 @@ if (isset($_POST['addingdetainee'])) {
     </tr> <br/>
 
     <tr>
-    <td><b>Release Date</b></td>
-    <td><input name="rdate" type="text" class="datetimepicker"></input></td>
+    <td><b>SIN</b></td>
+    <td><input name="sin" type="text"></input></td>
+    </tr> <br/>
+
+    <tr>
+    <td><b>Supervisor Username</b></td>
+    <td><input name="s_uname" type="text"></input></td>
     </tr> <br/>
 
     <tr>
@@ -173,15 +222,15 @@ if (isset($_POST['addingdetainee'])) {
     </tr> <br/>
 
     <tr>
-    <td><input type="hidden" name="updatingdetainee" /></td>
+    <td><input type="hidden" name="updatingemployee" /></td>
     <td><input type="hidden" name="username" value="<?php echo($dn) ?>"/>
     <td><input type="submit" value="Submit"/>
     </table>
     </form>
-<form method="post" action="detainee_management.php" >
-<input type="hidden" name="removingdetainee"/>
+<form method="post" action="employee_management.php" >
+<input type="hidden" name="removingemployee"/>
 <input type="hidden" name="username" value="<?php echo($dn) ?>"/>
-<input type="submit" value="Remove Detainee"/>
+<input type="submit" value="Remove Employee"/>
 </form>
 <br>
 <?php
@@ -189,7 +238,7 @@ if (!empty($err)) {
     echo("<b>".$err."</b><br>");    
 }
 ?>
-<a href='viewdetainees.php'>Go Back</a>
+<a href='viewemployees.php'>Go Back</a>
 </center>
 <script src="jquery.js"></script>
 <script src="jquery.datetimepicker.js"></script>

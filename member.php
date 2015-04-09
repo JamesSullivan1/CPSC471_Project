@@ -83,5 +83,18 @@ function get_sin($uname)
 
 }
 
+function get_name($sin)
+{
+    global $con;
+    $query = "SELECT uname FROM employee E WHERE sin = '$sin'";
+    $result = mysqli_query($con,$query) or die(mysqli_error($con));
+    $count = mysqli_num_rows($result);
+    if ($count == 1) {
+        return $result->fetch_row()[0];
+    }
+    return null;
+
+}
+
 ?>
 
