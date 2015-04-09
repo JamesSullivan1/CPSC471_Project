@@ -66,7 +66,6 @@ if (isset($_POST['removingshift'])) {
 <select name="sdate" style="width:390px">
 <?php
 global $con;
-if (!isset($_POST['username'])) die("lol");
 $un = $_POST['username'];
 $sin = get_sin($un);
 $query = "SELECT * FROM shift S WHERE (

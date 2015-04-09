@@ -98,7 +98,6 @@ CREATE TABLE IF NOT EXISTS equipment (
 CREATE TABLE IF NOT EXISTS detainee (
     uname           VARCHAR(64)     UNIQUE NOT NULL,
     rel_date        DATETIME            NOT NULL,
-    -- CELL?
 
     PRIMARY KEY (uname),
     FOREIGN KEY (uname) REFERENCES people(uname) 
