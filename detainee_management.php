@@ -134,7 +134,7 @@ if (!empty($err)) {
 <br>
 <center>
 <b>Update Detainee</b>
-<form method="post" action="removeshift.php" >
+<form method="post" action="detainee_management.php" >
     <table border="0" >
     <tr>
     <td><b>Password</b></td>
@@ -167,7 +167,7 @@ if (!empty($err)) {
     <td><input type="submit" value="Submit"/>
     </table>
     </form>
-<form method="post" action="removeshift.php" >
+<form method="post" action="detainee_management.php" >
 <input type="submit" value="Remove Detainee"/>
 <input type="hidden" name="removingshift"/>
 <input type="hidden" name="username" value="<?php echo($dn) ?>"/>
