@@ -30,8 +30,12 @@ if ($auth == false) {
 <img src="animated-traffic-cop-directing-traffic.gif"/>
 <h1 style="display:inline">Employee Page</h>
 <img src="animated-traffic-cop-directing-traffic.gif"/>
+</center>
 <br>
 <br>
+<form method="post" action="shift.php" >
+    <input type="submit" value="Shift Management"/>
+</form>
 <center>
 <br>
 <a href='logout.php'>Logout</a>

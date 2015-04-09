@@ -1,6 +1,5 @@
 <?php  
 
-session_start();
 require_once 'connect.php';   
 
 function isWarden($username) {
@@ -59,7 +58,7 @@ function supervises($emp1, $emp2)
                 (SELECT E.ssin FROM employee E, people P WHERE (
                  P.uname = '$emp2' AND E.sin = P.sin)) NATURAL JOIN 
                 (SELECT E.sin FROM employee E, people P WHERE (
-                 P.uname = '$emp1' AND E.sin = P.sin))"
+                 P.uname = '$emp1' AND E.sin = P.sin))";
     $result = mysqli_query($con,$query) or die(mysqli_error($con));
     $count = mysqli_num_rows($result);
     if ($count == 1) {
