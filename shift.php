@@ -46,6 +46,38 @@ function addShift($uname, $sdate, $edate, $reqrole, $snum) {
     return true; 
 }
 
+function removeShift($uname, $sdate) {
+    global $con;
+    global $err;
+    /* Get the current user creds */
+    if (!isset($_SESSION['username'])) {
+        die();
+        return false;
+    }
+    /* Verify the credentials of the adder and addee */
+    $cuname = $_SESSION['username'];
+    /* Verify the adder is a supervisor of addee, or they are a warden */
+    if (!supervises($cuname, $uname) || !isWarden($cuname)) {
+        $err = "Can't remove a shift for somebody you don't supervise.";
+        return false;
+    }
+    $esin = get_sin($uname);
+    /* Check that there's actually a shift there */
+    $query = "SELECT * FROM shift S WHERE (
+        S.e_sin = '$esin' AND S.start = '$sdate')";
+    $result = mysqli_query($con,$query) or die(mysqli_error($con));
+    $count = mysqli_num_rows($result);
+    if ($count != 1) {
+        return false;
+    }
+    /* Okay, update the table */
+    $query = "DELETE FROM shift WHERE (
+        e_sin = '$esin' AND start= '$sdate')";
+    mysqli_query($con,$query) or die(mysqli_error($con));
+    return true; 
+}
+
+
 function has_shift_during($uname, $sdate, $edate) {
     global $con;
     $esin = get_sin($uname);
@@ -76,6 +108,10 @@ if ($auth == false) {
     die();
 }
 
+if (!isset($_POST['username'])) {
+}
+$dn = $_POST['username'];
+
 if (isset($_POST['addingshift'])) {
     if ($_POST['sdate'] >= $_POST['edate']) {
         $err = "Can't add a time paradox.";
@@ -83,6 +119,8 @@ if (isset($_POST['addingshift'])) {
         addShift($_POST['username'], $_POST['sdate'], $_POST['edate'],
             $_POST['reqrole'], $_POST['snum']);
     }
+} else if (isset($_POST['removingshift'])) {
+    removeShift($_POST['username'], $_POST['sdate']);
 }
 
 ?>
@@ -95,22 +133,16 @@ if (isset($_POST['addingshift'])) {
 <table border="0" >
 <tr>
 <td>
-<b>Add Shift</b>
+<b>Add Shift for <?php echo($en) ?></b>
 </td>
 <td>
-<b>Remove Shift</b>
+<b>Remove Shift for <?php echo($en) ?></b>
 </td>
 </tr>
 <tr>
 <td>
 <form method="post" action="shift.php" >
     <table border="0" >
-    <tr>
-    <td>
-    <b>Username</b>
-    </td>
-    <td><input type="text" name="username">
-    </tr>
     <tr>
     <td><b>Start Time</b></td>
     <td><input name="sdate" type="text" class="datetimepicker"></input></td>
@@ -141,19 +173,22 @@ if (isset($_POST['addingshift'])) {
 </form>
 </td>
 <td>
-<form method="post" action="removeshift.php" >
-    <table border="0" >
-    <tr>
-    <td>
-    <b>Username</b>
-    </td>
-    <td><input type="text" name="username">
-    </tr>
-    <tr>
-    <td></td>
-    <td><input type="submit" value="Submit"/></td>
-    </tr>
-    </table>
+<form method="post" action="shift.php" >
+<select name="sdate" style="width:390px">
+<?php
+global $con;
+$query = "SELECT * FROM shift S WHERE (
+          S.e_sin = '$sin')";
+$result = mysqli_query($con,$query) or die(mysqli_error($con));
+while (($shift = $result->fetch_row())) {
+    echo("<option width=400px value=\"".$shift[1]."\"> ".$shift[1]." - ".$shift[2]."</option>");
+}
+?>
+</select>
+<br>
+<input type="submit" value="Submit"/>
+<input type="hidden" name="removingshift"/>
+<input type="hidden" name="username" value="<?php echo($en) ?>"/>
 </form>
 </td>
 </tr>

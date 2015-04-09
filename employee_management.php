@@ -118,6 +118,9 @@ if (!isset($_POST['username'])) {
     header("Location: viewdetainees.php");
     die();
 }
+if (!empty($err)) {
+    echo($err);
+}
 
 $dn = $_POST['username'];
 
