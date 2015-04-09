@@ -18,7 +18,9 @@ if ($auth == false) {
 
 ?>
 <center>
+<img src="Animated-handcuffs.gif" />
 <h1 style="display:inline">Detainee List</h>
+<img src="Animated-handcuffs.gif" />
 </center>
 <br>
 <br>
