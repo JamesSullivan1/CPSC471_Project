@@ -33,6 +33,7 @@ if ($auth == false) {
 <table cellpadding="5" border=1>
 <tr>
 <th>Username</th><th>Name</th><th>Birthdate</th><th>Release date</th>
+<th>Cell</th>
 </tr>
 <?php
 global $con;
@@ -44,6 +45,7 @@ while (($r = $result->fetch_row())) {?>
 <td><?php echo $r[3] . ", " . $r[2] ?></td>
 <td><?php echo $r[4] ?></td>
 <td><?php echo $r[5] ?></td>
+<td><?php echo "Section " .$r[7].", Cell ".$r[6] ?></td> 
 <?php if (isWarden($_SESSION['username'])) { ?><td>
 <form method="post" action="detainee_management.php">
 <input type="submit" value="EDIT" />

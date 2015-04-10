@@ -133,6 +133,10 @@ if (isset($_POST['addingdetainee'])) {
         $_POST['lname'], $_POST['bdate'], $_POST['rdate']);
 }
 
+$query = "SELECT * FROM people NATURAL JOIN detainee WHERE uname = '$dn'";
+$result = mysqli_query($con,$query) or die(mysqli_error($con));
+$r = $result->fetch_row();
+
 ?>
 <center>
 <h1 style="display:inline">Detainee Management</h>
@@ -145,28 +149,30 @@ if (isset($_POST['addingdetainee'])) {
 <form method="post" action="detainee_management.php" >
     <table border="0" >
     <tr>
+    <td><b>First Name</b></td>
+    <td><input name="fname" value="<?php echo $r[2]?>" type="text"</input></td>
+    </tr> <br/>
+
+    <tr>
+    <td><b>Last Name</b></td>
+    <td><input name="lname" value="<?php echo $r[3]?>" type="text"></input></td>
+    </tr> <br/>
+
+    <tr>
     <td><b>Password</b></td>
     <td><input name="pass" type="password"></input></td>
     </tr> <br/>
 
     <tr>
-    <td><b>First Name</b></td>
-    <td><input name="fname" type="text"></input></td>
-    </tr> <br/>
-
-    <tr>
-    <td><b>Last Name</b></td>
-    <td><input name="lname" type="text"></input></td>
-    </tr> <br/>
-
-    <tr>
     <td><b>Release Date</b></td>
-    <td><input name="rdate" type="text" class="datetimepicker"></input></td>
+    <td><input name="rdate" type="text" value="<?php echo $r[5]?>" 
+            class="datetimepicker"></input></td>
     </tr> <br/>
 
     <tr>
     <td><b>Birth Date</b></td>
-    <td><input name="bdate" type="text" class="datetimepicker"></input></td>
+    <td><input name="bdate" type="text" value="<?php echo $r[4]?>"
+            class="datetimepicker"></input></td>
     </tr> <br/>
 
     <tr>
@@ -193,6 +199,7 @@ if (!empty($err)) {
 <script>
 $('.datetimepicker').datetimepicker({
 dayOfWeekStart : 1,
+timepicker : false,
 lang:'en'
 });
 $('.datetimepicker').datetimepicker();

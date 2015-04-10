@@ -71,6 +71,7 @@ if (!empty($err)) {
 <script>
 $('.datetimepicker').datetimepicker({
 dayOfWeekStart : 1,
+timepicker : false,
 lang:'en'
 });
 $('.datetimepicker').datetimepicker();

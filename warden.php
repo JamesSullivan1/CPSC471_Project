@@ -58,6 +58,11 @@ if ($auth == false) {
 <br>
 <br>
 <center>
+<form method="post" action="viewdependents.php" >
+    <input type="submit" value="View Dependents"/>
+    <input name="username" type="hidden" 
+           value="<?php echo($_SESSION['username'])?>">
+</form>
 <form method="post" action="viewemployees.php" >
     <input type="submit" value="View Employees"/>
 </form>
