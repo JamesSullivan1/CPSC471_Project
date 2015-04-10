@@ -21,7 +21,7 @@ function removeDependent($fname, $bdate, $e_sin)
     }
     /* Verify the credentials of the adder */
     $cuname = $_SESSION['username'];
-    if (!isWarden($cuname) || get_sin($cuname) != $e_sin) {
+    if (!isWarden($cuname) && get_sin($cuname) != $e_sin) {
         $err = "Only wardens can remove other people's dependents";
         return false;
     }
@@ -55,7 +55,7 @@ if ($auth == false) {
 $sin = get_sin($un);
 if (isset($_POST['removingdependent'])) {
     if(removeDependent($_POST['fname'], $_POST['bdate'], $sin)) {
-        header("Location: member.php");
+        header("Location: memberpage.php");
     }
 }
 
@@ -83,9 +83,9 @@ $query = "SELECT * FROM dependent WHERE e_sin = '$sin'";
 $result = mysqli_query($con,$query) or die(mysqli_error($con));
 while (($r = $result->fetch_row())) {?>
 <tr>
-<td><?php echo $r[0] ?></td>
-<td><?php echo $r[1] ?></td>
+<td><?php echo $r[0] . " " . $r[1]?></td>
 <td><?php echo $r[2] ?></td>
+<td><?php echo $r[3] ?></td>
 <td>
 <form method="post" action="viewdependents.php">
 <input type="submit" value="REMOVE" />
