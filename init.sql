@@ -125,12 +125,13 @@ CREATE TABLE IF NOT EXISTS works (
 );
 
 CREATE TABLE IF NOT EXISTS contact (
-    name            VARCHAR(64),
+    fname           VARCHAR(32),
+    lname           VARCHAR(32),
     birthdate       DATE,
     relship         VARCHAR(16)     NOT NULL,
     d_uname         VARCHAR(64),
 
-    PRIMARY KEY (name, birthdate, d_uname),
+    PRIMARY KEY (fname, birthdate, d_uname),
     FOREIGN KEY (d_uname) REFERENCES detainee(uname)
     ON DELETE CASCADE
 );

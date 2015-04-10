@@ -180,6 +180,10 @@ if (isset($_POST['addingemployee'])) {
         $_POST['lname'], $_POST['bdate'], $_POST['sin'], $_POST['s_uname']);
 }
 
+$bestquery = "SELECT * FROM people NATURAL JOIN employee WHERE uname = '$dn'";
+$bestresult = mysqli_query($con, $bestquery) or die (mysqli_error($con));
+$r = $bestresult->fetch_row();
+
 ?>
 <center>
 <h1 style="display:inline">Employee Management</h>
@@ -198,27 +202,27 @@ if (isset($_POST['addingemployee'])) {
 
     <tr>
     <td><b>First Name</b></td>
-    <td><input name="fname" type="text"></input></td>
+    <td><input name="fname" type="text" value="<?php echo $r[2] ?>"></input></td>
     </tr> <br/>
 
     <tr>
     <td><b>Last Name</b></td>
-    <td><input name="lname" type="text"></input></td>
+    <td><input name="lname" type="text" value="<?php echo $r[3] ?>"></input></td>
     </tr> <br/>
 
     <tr>
     <td><b>SIN</b></td>
-    <td><input name="sin" type="text"></input></td>
+    <td><input name="sin" type="text" value="<?php echo $r[5] ?>"></input></td>
     </tr> <br/>
 
     <tr>
     <td><b>Supervisor Username</b></td>
-    <td><input name="s_uname" type="text"></input></td>
+    <td><input name="s_uname" type="text" value="<?php echo get_name($r[6]) ?>"></input></td>
     </tr> <br/>
 
     <tr>
     <td><b>Birth Date</b></td>
-    <td><input name="bdate" type="text" class="datetimepicker"></input></td>
+    <td><input name="bdate" type="text" class="datetimepicker" value="<?php echo $r[4] ?>"></input></td>
     </tr> <br/>
 
     <tr>
