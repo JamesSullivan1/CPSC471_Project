@@ -37,7 +37,8 @@ if ($auth == false) {
 </tr>
 <?php
 global $con;
-$query = "SELECT * FROM people NATURAL JOIN detainee";
+$query = "SELECT * FROM ((SELECT * FROM people NATURAL JOIN detainee) AS T)
+    INNER JOIN livesin ON T.uname=livesin.d_uname";
 $result = mysqli_query($con,$query) or die(mysqli_error($con));
 while (($r = $result->fetch_row())) {?>
 <tr>
@@ -45,7 +46,7 @@ while (($r = $result->fetch_row())) {?>
 <td><?php echo $r[3] . ", " . $r[2] ?></td>
 <td><?php echo $r[4] ?></td>
 <td><?php echo $r[5] ?></td>
-<td><?php echo "Section " .$r[7].", Cell ".$r[6] ?></td> 
+<td><?php echo "Section " .$r[8].", Cell ".$r[7] ?></td> 
 <?php if (isWarden($_SESSION['username'])) { ?>
 <td>
 <form method="post" action="viewcontacts.php">

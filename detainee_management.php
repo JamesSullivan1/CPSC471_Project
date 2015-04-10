@@ -13,7 +13,8 @@ require_once 'member.php';
 
 $err = "";
 
-function addDetainee($uname, $pass, $fname, $lname, $birthdate, $rel_date)
+function addDetainee($uname, $pass, $fname, $lname, $birthdate, $rel_date,
+    $c_num, $cs_num)
 {
     global $con;
     global $err;
@@ -22,23 +23,31 @@ function addDetainee($uname, $pass, $fname, $lname, $birthdate, $rel_date)
         die();
         return false;
     }
+
+    if (empty($uname) || empty($pass) || empty($fname) || empty($lname) ||
+        empty($rel_date) || empty($c_num) || empty($cs_num)) {
+        $err = "Not enough arguments given.";
+        return false;
+    }
+
     /* Verify the credentials of the adder */
     $cuname = $_SESSION['username'];
     if (!isWarden($cuname)) {
         $err = "Only wardens can add detainees";
         return false;
     }
-
     /* Okay, update the table */
     $query = "INSERT INTO people VALUES ('$uname', SHA1('$pass'), '$fname', 
         '$lname', '$birthdate')";
     $result = mysqli_query($con,$query) or die(mysqli_error($con));
-    $query = "INSERT INTO detainee VALUES ('$uname', '$rel_date')"; 
+    $query = "INSERT INTO detainee VALUES ('$uname', '$rel_date',
+        '$c_num', '$cs_num')"; 
     $result = mysqli_query($con,$query) or die(mysqli_error($con));
     return true;
 }
 
-function updateDetainee($uname, $pass, $fname, $lname, $birthdate, $rel_date)
+function updateDetainee($uname, $pass, $fname, $lname, $birthdate, $rel_date,
+    $c_num, $cs_num)
 {
     global $con;
     global $err;
@@ -69,12 +78,19 @@ function updateDetainee($uname, $pass, $fname, $lname, $birthdate, $rel_date)
         return false;
     }
 
+    if (empty($c_num) || empty($cs_num)) {
+        $r = $result->fetch_row();
+        $c_num = $r[2];
+        $cs_num = $r[3];
+    }
+
     /* Okay, update the table */
-    $query = "UPDATE people SET uname='$uname', pass=SHA1('$pass'), fname='$fname', 
-        lname='$lname', birthdate='$birthdate' WHERE uname = '$uname'";
+    $query = "UPDATE people SET uname='$uname', pass=SHA1('$pass'), 
+        fname='$fname', lname='$lname', birthdate='$birthdate'
+        WHERE uname = '$uname'";
     $result = mysqli_query($con,$query) or die(mysqli_error($con));
-    $query = "UPDATE detainee SET uname='$uname', rel_date='$rel_date' 
-        WHERE uname = '$uname'"; 
+    $query = "UPDATE detainee SET uname='$uname', rel_date='$rel_date',
+        c_num='$c_num', cs_num='$cs_num' WHERE uname = '$uname'"; 
     $result = mysqli_query($con,$query) or die(mysqli_error($con));
     return true;
 }
@@ -121,16 +137,26 @@ if (!isset($_POST['username'])) {
 
 $dn = $_POST['username'];
 
+$c_num = "";
+$cs_num = "";
+if (isset($_POST['celldesc'])) {
+    $split = explode(",", $_POST['celldesc']);
+    $c_num = $split[1];
+    $c_num = $split[0];
+}
+
 if (isset($_POST['addingdetainee'])) {
     addDetainee($_POST['username'],$_POST['pass'],$_POST['fname'],
-        $_POST['lname'], $_POST['bdate'], $_POST['rdate']);
+        $_POST['lname'], $_POST['bdate'], $_POST['rdate'], $c_num,
+        $cs_num);
 } else if (isset($_POST['removingdetainee'])) {
     if(removeDetainee($_POST['username'])) {
         header("Location: viewdetainees.php");
     }
 } else if (isset($_POST['updatingdetainee'])) {
     updateDetainee($_POST['username'],$_POST['pass'],$_POST['fname'],
-        $_POST['lname'], $_POST['bdate'], $_POST['rdate']);
+        $_POST['lname'], $_POST['bdate'], $_POST['rdate'], $c_num,
+        $cs_num);
 }
 
 $query = "SELECT * FROM people NATURAL JOIN detainee WHERE uname = '$dn'";
@@ -174,6 +200,23 @@ $r = $result->fetch_row();
     <td><input name="bdate" type="text" value="<?php echo $r[4]?>"
             class="datetimepicker"></input></td>
     </tr> <br/>
+
+<?php if(isWarden($_SESSION['username'])) { ?>
+    <tr>
+    <td><b>Cell</b></td>
+    <td><select name="celldesc">
+<?php 
+global $con;
+$query = "SELECT * FROM cell INNER JOIN section ON cell.s_num=section.num ORDER BY s_num,cell.num;";
+$result = mysqli_query($con,$query) or die(mysqli_error($con));
+while (($descr = $result->fetch_row())) {
+    echo("<option width=200px value=\"".$descr[1].",".$descr[0]."\"> 
+        Section ".$descr[1].", Cell ".$descr[0]." </input>");
+}
+?>
+    </select></td>
+    </tr> <br/>
+<?php } ?>
 
     <tr>
     <td><input type="hidden" name="updatingdetainee" /></td>

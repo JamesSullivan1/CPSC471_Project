@@ -104,14 +104,10 @@ CREATE TABLE IF NOT EXISTS equipment (
 CREATE TABLE IF NOT EXISTS detainee (
     uname           VARCHAR(64),
     rel_date        DATE            NOT NULL,
-    c_num           INT             NOT NULL,
-    cs_num          INT             NOT NULL,
 
     PRIMARY KEY (uname),
     FOREIGN KEY (uname) REFERENCES people(uname)
-    ON DELETE CASCADE,
-    FOREIGN KEY (c_num, cs_num) REFERENCES cell(num, s_num)
-    ON DELETE RESTRICT
+    ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS works (
@@ -122,6 +118,20 @@ CREATE TABLE IF NOT EXISTS works (
     ON DELETE CASCADE,
     FOREIGN KEY (t_id) REFERENCES task(id)
     ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS livesin (
+    d_uname         VARCHAR(64)     NOT NULL,
+    c_num           INT             NOT NULL,
+    cs_num          INT             NOT NULL,
+
+    PRIMARY KEY (d_uname, c_num, cs_num),
+    FOREIGN KEY (d_uname) REFERENCES detainee(uname)
+    ON DELETE CASCADE,
+    FOREIGN KEY (c_num) REFERENCES cell(num)
+    ON DELETE RESTRICT,
+    FOREIGN KEY (cs_num) REFERENCES section(num)
+    ON DELETE RESTRICT
 );
 
 CREATE TABLE IF NOT EXISTS contact (

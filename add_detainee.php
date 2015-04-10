@@ -54,6 +54,21 @@ $err = "";
     </tr> <br/>
 
     <tr>
+    <td><b>Cell</b></td>
+    <td><select name="celldesc">
+<?php 
+global $con;
+$query = "SELECT * FROM cell INNER JOIN section ON cell.s_num=section.num ORDER BY s_num,cell.num;";
+$result = mysqli_query($con,$query) or die(mysqli_error($con));
+while (($descr = $result->fetch_row())) {
+    echo("<option width=200px value=\"".$descr[1].",".$descr[0]."\"> Section ".$descr[1].", Cell ".
+                $descr[0]." </input>");
+}
+?>
+    </select></td>
+    </tr> <br/>
+
+    <tr>
     <td><input type="hidden" name="addingdetainee" /></td>
     <td><input type="submit" value="Submit"/>
     </table>
