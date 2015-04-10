@@ -23,18 +23,19 @@ CREATE TABLE IF NOT EXISTS employee (
 
 CREATE TABLE IF NOT EXISTS mname (
     mname           VARCHAR(32)     NOT NULL,
-    uname           CHAR(9),
+    uname           CHAR(9)         NOT NULL,
 
     FOREIGN KEY (uname) REFERENCES people(uname)
     ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS dependent (
-    name            VARCHAR(64)     NOT NULL,
+    name            VARCHAR(64),
     birthdate       DATETIME,
     relship         VARCHAR(16)     NOT NULL,
     e_sin           CHAR(9),
 
+    PRIMARY KEY (name, birthdate, e_sin),
     FOREIGN KEY (e_sin) REFERENCES employee(sin)
     ON DELETE CASCADE
 );
@@ -42,30 +43,30 @@ CREATE TABLE IF NOT EXISTS dependent (
 CREATE TABLE IF NOT EXISTS section (
     name            VARCHAR(32)     NOT NULL,
     num             INT,
-    w_sin           CHAR(9),
+    w_sin           CHAR(9)         NOT NULL,
 
     PRIMARY KEY (num),
     FOREIGN KEY (w_sin) REFERENCES employee(sin)
-    ON DELETE CASCADE
+    ON DELETE RESTRICT
 );
 
 CREATE TABLE IF NOT EXISTS cell (
-    num             INT             NOT NULL,
+    num             INT,
     s_num           INT,
 
-    PRIMARY KEY (num,s_num),
+    PRIMARY KEY (num, s_num),
     FOREIGN KEY (s_num) REFERENCES section(num)
     ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS shift (
     req_role        VARCHAR(10),
-    start           DATETIME            NOT NULL,
-    end             DATETIME            NOT NULL,
+    start           DATETIME,
+    end             DATETIME        NOT NULL,
     e_sin           CHAR(9),
-    s_num           INT,
+    s_num           INT             NOT NULL,
 
-    PRIMARY KEY (e_sin,start),
+    PRIMARY KEY (e_sin, start),
     FOREIGN KEY (e_sin) REFERENCES employee(sin)
     ON DELETE CASCADE,
     FOREIGN KEY (s_num) REFERENCES section(num)
@@ -75,10 +76,10 @@ CREATE TABLE IF NOT EXISTS shift (
 CREATE TABLE IF NOT EXISTS task (
     id              INT,
     descr           VARCHAR(512),
-    start           DATETIME            NOT NULL,
-    end             DATETIME            NOT NULL,
-    s_sin           CHAR(9),
-    s_num           INT,
+    start           DATETIME        NOT NULL,
+    end             DATETIME        NOT NULL,
+    s_sin           CHAR(9)         NOT NULL,
+    s_num           INT             NOT NULL,
 
     PRIMARY KEY (id),
     FOREIGN KEY (s_sin) REFERENCES employee(sin)
@@ -89,24 +90,28 @@ CREATE TABLE IF NOT EXISTS task (
 
 CREATE TABLE IF NOT EXISTS equipment (
     name            VARCHAR(32)     NOT NULL,
-    t_id            INT,
+    t_id            INT             NOT NULL,
 
     FOREIGN KEY (t_id) REFERENCES task(id)
     ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS detainee (
-    uname           VARCHAR(64)     UNIQUE NOT NULL,
-    rel_date        DATETIME            NOT NULL,
+    uname           VARCHAR(64),
+    rel_date        DATETIME        NOT NULL,
+    c_num           INT             NOT NULL,
+    cs_num          INT             NOT NULL,
 
     PRIMARY KEY (uname),
-    FOREIGN KEY (uname) REFERENCES people(uname) 
-    ON DELETE CASCADE
+    FOREIGN KEY (uname) REFERENCES people(uname)
+    ON DELETE CASCADE,
+    FOREIGN KEY (c_num, cs_num) REFERENCES cell(num, s_num)
+    ON DELETE RESTRICT
 );
 
 CREATE TABLE IF NOT EXISTS works (
-    d_uname         VARCHAR(64),
-    t_id            INT,
+    d_uname         VARCHAR(64)     NOT NULL,
+    t_id            INT             NOT NULL,
 
     FOREIGN KEY (d_uname) REFERENCES detainee(uname)
     ON DELETE CASCADE,
@@ -114,26 +119,13 @@ CREATE TABLE IF NOT EXISTS works (
     ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS livesin (
-    d_uname         VARCHAR(64),
-    s_num           INT,
-    c_num           INT,
-
-    FOREIGN KEY (d_uname) REFERENCES detainee(uname)
-    ON DELETE CASCADE,
-    FOREIGN KEY (s_num) REFERENCES section(num)
-    ON DELETE CASCADE,
-    FOREIGN KEY (c_num) REFERENCES cell(num)
-    ON DELETE CASCADE
-);
-
 CREATE TABLE IF NOT EXISTS contact (
-    name            VARCHAR(64)     NOT NULL,
+    name            VARCHAR(64),
     birthdate       DATETIME,
     relship         VARCHAR(16)     NOT NULL,
     d_uname         VARCHAR(64),
 
+    PRIMARY KEY (name, birthdate, d_uname),
     FOREIGN KEY (d_uname) REFERENCES detainee(uname)
     ON DELETE CASCADE
 );
-
