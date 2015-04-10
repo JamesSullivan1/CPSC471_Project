@@ -10,9 +10,40 @@ session_start();
 require_once 'connect.php';
 require_once 'member.php';
 
-if (!isset($_POST['username'])) die("lol");
-$un = $_POST['username'];
+function removeDependent($fname, $bdate, $e_sin)
+{
+    global $con;
+    global $err;
+    /* Get the current user creds */
+    if (!isset($_SESSION['username'])) {
+        die();
+        return false;
+    }
+    /* Verify the credentials of the adder */
+    $cuname = $_SESSION['username'];
+    if (!isWarden($cuname) || get_sin($cuname) != $e_sin) {
+        $err = "Only wardens can remove other people's dependents";
+        return false;
+    }
 
+    /* Check that they're actually a dependent */
+    $query = "SELECT * FROM dependent WHERE (fname = '$fname' AND
+        e_sin = '$e_sin' AND birthdate = '$bdate')";
+    $result = mysqli_query($con,$query) or die(mysqli_error($con));
+    $count = mysqli_num_rows($result);
+    if ($count != 1) {
+        $err = "No dependent found";
+        return false;
+    }
+    /* Okay, update the table */
+    $query = "DELETE FROM dependent WHERE (fname = '$fname' AND
+        e_sin = '$e_sin' AND birthdate = '$bdate')";
+    $result = mysqli_query($con,$query) or die(mysqli_error($con));
+    return true;
+}
+
+
+$un = $_POST['username'];
 $auth = isset($_SESSION['username']) && (isWarden($_SESSION['username']) ||
                                          isEmployee($_SESSION['username']) &&
                                          $un == $_SESSION['username']);
@@ -22,6 +53,12 @@ if ($auth == false) {
 }
 
 $sin = get_sin($un);
+if (isset($_POST['removingdependent'])) {
+    if(removeDependent($_POST['fname'], $_POST['bdate'], $sin)) {
+        header("Location: member.php");
+    }
+}
+
 
 ?>
 <center>
@@ -32,6 +69,10 @@ $sin = get_sin($un);
 <br>
 <br>
 <center>
+<form method="post" action="add_dependent.php">
+<input type="submit" value="Add Dependent">
+<input type="hidden" name="e_sin" value="<?php echo $sin ?>">
+</form>
 <table cellpadding="5" border=1>
 <tr>
 <th>Name</th><th>Birthdate</th><th>Relationship</th>
@@ -45,10 +86,24 @@ while (($r = $result->fetch_row())) {?>
 <td><?php echo $r[0] ?></td>
 <td><?php echo $r[1] ?></td>
 <td><?php echo $r[2] ?></td>
+<td>
+<form method="post" action="viewdependents.php">
+<input type="submit" value="REMOVE" />
+<input type="hidden" name="username" value="<?php echo $un ?>"/>
+<input type="hidden" name="removingdependent"/>
+<input type="hidden" name="bdate" value="<?php echo $r[2]?>"/>
+<input type="hidden" name="fname" value="<?php echo $r[0]?>"/>
+</form>
+</td>
 </tr>
 <?php } ?>
 </table>
 <br>
+<?php
+if (!empty($err)) {
+    echo("<b>".$err."</b><br>");    
+}
+?>
 <a href='memberpage.php'>Go Back</a>
 </center>
 

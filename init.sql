@@ -34,12 +34,13 @@ CREATE TABLE IF NOT EXISTS mname (
 );
 
 CREATE TABLE IF NOT EXISTS dependent (
-    name            VARCHAR(64),
+    fname           VARCHAR(64),
+    lname           VARCHAR(64),
     birthdate       DATE,
     relship         VARCHAR(16)     NOT NULL,
     e_sin           CHAR(9),
 
-    PRIMARY KEY (name, birthdate, e_sin),
+    PRIMARY KEY (fname, birthdate, e_sin),
     FOREIGN KEY (e_sin) REFERENCES employee(sin)
     ON DELETE CASCADE
 );

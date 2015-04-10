@@ -9,7 +9,7 @@ INSERT INTO employee VALUES ('111111111',NULL,'joe');
 
 INSERT INTO people VALUES ('joel',SHA1('joel'),'Jorbel','James',NULL);
 INSERT INTO employee VALUES ('112233445',NULL,'joel');
-INSERT INTO dependent VALUES ('Vincent Van Gogh','1700-01-01','Son','112233445');
+INSERT INTO dependent VALUES ('Vincent', 'Van Gogh', '1700-01-01','Son','112233445');
 
 INSERT INTO people VALUES ('canwe',SHA1('yes'),'Bob','Builder',NULL);
 INSERT INTO employee VALUES ('234567897',NULL,'canwe');
@@ -19,9 +19,9 @@ INSERT INTO employee VALUES ('111111112',NULL,'jamie');
 
 INSERT INTO people VALUES ('jeffie',SHA1('james'),'Jeff','Ruler',NULL);
 INSERT INTO employee VALUES ('314159265',NULL,'jeffie');
-INSERT INTO dependent VALUES ('Danny Darrow','1992-09-10','Whatever','314159265');
-INSERT INTO dependent VALUES ('Danger Joe','2000-01-01','Brother','314159265');
-INSERT INTO dependent VALUES ('Sammy Straightedge','1998-05-17','Advisor','314159265');
+INSERT INTO dependent VALUES ('Danny', 'Darrow', '1992-09-10','Whatever','314159265');
+INSERT INTO dependent VALUES ('Danger', 'Joe','2000-01-01','Brother','314159265');
+INSERT INTO dependent VALUES ('Sammy', 'Straightedge','1998-05-17','Advisor','314159265');
 
 INSERT INTO section VALUES ('Cafeteria',1,'123456789');
 INSERT INTO section VALUES ('Cell Block A',2,'234567897');

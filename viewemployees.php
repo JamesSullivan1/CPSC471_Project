@@ -29,6 +29,7 @@ if ($auth == false) {
 <table cellpadding="5" border=1>
 <tr>
 <th>Username</th><th>Name</th><th>Birthdate</th><th>Supervisor</th>
+<th>Warden of</th>
 </tr>
 <?php
 global $con;
@@ -40,6 +41,16 @@ while (($r = $result->fetch_row())) {?>
 <td><?php echo $r[3] . ", " . $r[2] ?></td>
 <td><?php echo $r[4] ?></td>
 <td><?php echo get_name($r[6]) ?></td>
+<?php
+$query2 = "SELECT name FROM section WHERE w_sin = '$r[5]'";
+$result2 = mysqli_query($con,$query2) or die(mysqli_error($con));
+if (mysqli_num_rows($result2) > 0) {
+    $r2 = $result2->fetch_row()[0];
+} else {
+    $r2 = "";
+}
+?>
+<td><?php echo $r2 ?></td>
 <?php if (isWarden($_SESSION['username'])) { ?><td>
 <form method="post" action="viewdependents.php">
 <input type="submit" value="View Dependents" />
