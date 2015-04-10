@@ -58,6 +58,9 @@ if ($auth == false) {
 <br>
 <br>
 <center>
+<form method="post" action="myshifts.php" >
+    <input type="submit" value="View My Shifts"/>
+</form>
 <form method="post" action="viewdependents.php" >
     <input type="submit" value="View Dependents"/>
     <input name="username" type="hidden" 

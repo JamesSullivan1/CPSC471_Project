@@ -60,7 +60,7 @@ if (mysqli_num_rows($result2) > 0) {
 </td>
 <td>
 <form method="post" action="shift.php">
-<input type="submit" value="View Shifts" />
+<input type="submit" value="Edit Shifts" />
 <input type="hidden" name="username" value="<?php echo $r[0] ?>" />
 </form>
 </td>

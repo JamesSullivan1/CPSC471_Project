@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS shift (
     req_role        VARCHAR(10),
     start           DATETIME,
     end             DATETIME        NOT NULL,
-    e_sin           CHAR(9),
+    e_sin           CHAR(9)         NOT NULL,
     s_num           INT             NOT NULL,
 
     PRIMARY KEY (e_sin, start),

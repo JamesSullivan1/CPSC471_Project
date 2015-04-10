@@ -83,8 +83,8 @@ function has_shift_during($uname, $sdate, $edate) {
     $esin = get_sin($uname);
     $query = "SELECT * FROM shift S WHERE (
         S.e_sin = '$esin' AND 
-            ('$sdate' < S.start AND '$edate' > S.start) OR
-            ('$sdate' >= S.start AND '$sdate' < S.end))";      
+            (('$sdate' < S.start AND '$edate' > S.start) OR
+            ('$sdate' >= S.start AND '$sdate' < S.end)))";      
     $result = mysqli_query($con,$query) or die(mysqli_error($con));
     $count = mysqli_num_rows($result);
     return ($count > 0);
