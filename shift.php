@@ -87,19 +87,7 @@ function has_shift_during($uname, $sdate, $edate) {
             ('$sdate' >= S.start AND '$sdate' < S.end))";      
     $result = mysqli_query($con,$query) or die(mysqli_error($con));
     $count = mysqli_num_rows($result);
-    $sdt = new DateTime($sdate);
-    $edt = new DateTime($edate);
-    for ($i = 0; $i < $count; $i++) {
-        $cur = $result->fetch_row()[$i]; 
-        $csdt = new DateTime($cur[1]);
-        $cedt = new DateTime($cur[2]);
-        if ($sdt >= $csdt && $sdt < $cedt) {
-            return true;
-        } else if ($edt > $cedt && $edt <= $cedt) {
-            return true;
-        }
-    }
-    return false;
+    return ($count > 0);
 }
 
 $auth = isset($_SESSION['username']) && isEmployee($_SESSION['username']);
@@ -110,7 +98,7 @@ if ($auth == false) {
 
 if (!isset($_POST['username'])) {
 }
-$dn = $_POST['username'];
+$en = $_POST['username'];
 
 if (isset($_POST['addingshift'])) {
     if ($_POST['sdate'] >= $_POST['edate']) {
@@ -166,8 +154,9 @@ if (isset($_POST['addingshift'])) {
     </td>
     </tr> <br/>
     <tr>
-    <td><input type="hidden" name="addingshift" /></td>
-    <td><input type="submit" value="Submit"/></td>
+      <td><input type="hidden" name="addingshift" />
+	<input type="hidden" name="username" value="<?php echo $en ?>"></td>
+    <td><input type="submit" value="Add Shift"/></td>
     </tr>
     </table>
 </form>
@@ -177,8 +166,9 @@ if (isset($_POST['addingshift'])) {
 <select name="sdate" style="width:390px">
 <?php
 global $con;
-$query = "SELECT * FROM shift S WHERE (
-          S.e_sin = '$sin')";
+$sin = get_sin($en);
+$query = "SELECT * FROM shift WHERE (
+          e_sin = '$sin')";
 $result = mysqli_query($con,$query) or die(mysqli_error($con));
 while (($shift = $result->fetch_row())) {
     echo("<option width=400px value=\"".$shift[1]."\"> ".$shift[1]." - ".$shift[2]."</option>");
@@ -186,7 +176,7 @@ while (($shift = $result->fetch_row())) {
 ?>
 </select>
 <br>
-<input type="submit" value="Submit"/>
+<input type="submit" value="Remove Shift"/>
 <input type="hidden" name="removingshift"/>
 <input type="hidden" name="username" value="<?php echo($en) ?>"/>
 </form>

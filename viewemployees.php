@@ -51,18 +51,26 @@ if (mysqli_num_rows($result2) > 0) {
 }
 ?>
 <td><?php echo $r2 ?></td>
-<?php if (isWarden($_SESSION['username'])) { ?><td>
+<?php if (isWarden($_SESSION['username'])) { ?>
+<td>
 <form method="post" action="viewdependents.php">
 <input type="submit" value="View Dependents" />
 <input type="hidden" name="username" value="<?php echo $r[0] ?>" />
 </form>
-</td><?php } ?>
-<?php if (isWarden($_SESSION['username'])) { ?><td>
+</td>
+<td>
+<form method="post" action="shift.php">
+<input type="submit" value="View Shifts" />
+<input type="hidden" name="username" value="<?php echo $r[0] ?>" />
+</form>
+</td>
+<td>
 <form method="post" action="employee_management.php">
 <input type="submit" value="EDIT" />
 <input type="hidden" name="username" value="<?php echo $r[0] ?>" />
 </form>
-</td><?php } ?>
+</td>
+<?php } ?>
 </tr>
 <?php } ?>
 </table>
