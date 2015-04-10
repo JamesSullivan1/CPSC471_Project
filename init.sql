@@ -1,10 +1,14 @@
 
+DROP DATABASE c471;
+CREATE DATABASE c471;
+USE c471;
+
 CREATE TABLE IF NOT EXISTS people (
     uname           VARCHAR(64)     UNIQUE NOT NULL,
     pass            CHAR(40)        NOT NULL,
     fname           VARCHAR(32)     NOT NULL,
     lname           VARCHAR(32)     NOT NULL,
-    birthdate       DATETIME,
+    birthdate       DATE,
 
     PRIMARY KEY (uname)
 );
@@ -31,7 +35,7 @@ CREATE TABLE IF NOT EXISTS mname (
 
 CREATE TABLE IF NOT EXISTS dependent (
     name            VARCHAR(64),
-    birthdate       DATETIME,
+    birthdate       DATE,
     relship         VARCHAR(16)     NOT NULL,
     e_sin           CHAR(9),
 
@@ -98,7 +102,7 @@ CREATE TABLE IF NOT EXISTS equipment (
 
 CREATE TABLE IF NOT EXISTS detainee (
     uname           VARCHAR(64),
-    rel_date        DATETIME        NOT NULL,
+    rel_date        DATE            NOT NULL,
     c_num           INT             NOT NULL,
     cs_num          INT             NOT NULL,
 
@@ -121,7 +125,7 @@ CREATE TABLE IF NOT EXISTS works (
 
 CREATE TABLE IF NOT EXISTS contact (
     name            VARCHAR(64),
-    birthdate       DATETIME,
+    birthdate       DATE,
     relship         VARCHAR(16)     NOT NULL,
     d_uname         VARCHAR(64),
 
