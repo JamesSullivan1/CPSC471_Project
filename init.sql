@@ -130,7 +130,7 @@ CREATE TABLE IF NOT EXISTS livesin (
     ON DELETE CASCADE,
     FOREIGN KEY (c_num) REFERENCES cell(num)
     ON DELETE RESTRICT,
-    FOREIGN KEY (cs_num) REFERENCES section(num)
+    FOREIGN KEY (cs_num) REFERENCES cell (s_num)
     ON DELETE RESTRICT
 );
 
