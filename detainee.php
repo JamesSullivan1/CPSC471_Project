@@ -39,5 +39,17 @@ $timeLeft = timeLeft($_SESSION['username']);
 echo($timeLeft . " until you're free.");
 ?>
 <br>
+<br>
+<br>
+<center>
+    <form method="post" action="viewtasks.php" >
+    <input type="submit" value="View My Tasks"/>
+</form>
+</center>
+<center>
+    <form method="post" action="non_contacts.php" >
+    <input type="submit" value="Non Contact(s)"/>
+</form>
+</center>
 <a href='logout.php'>Logout</a>
 </center>

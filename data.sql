@@ -81,4 +81,6 @@ INSERT INTO people VALUES ('susie',SHA1('sansan'),'Susan','San',NULL);
 INSERT INTO detainee VALUES ('susie','2016-01-02');
 INSERT INTO livesin VALUES ('susie',2,2);
 
+INSERT INTO task VALUES (420, 'blazing','2015-10-02 9:50','2015-10-02 10:50','314159265','2');
+INSERT INTO works VALUES ('thathighguy',420);
 COMMIT;
