@@ -83,13 +83,6 @@ function removeTask($id, $uname) {
     if ($count != 1) {
         return false;
     }
-    $s_uname = get_name($result->fetch_row()[0]);
-    /* Verify the adder is a supervisor of addee, or they are a warden */
-    if (!supervises($cuname, $s_uname) || !isWarden($cuname)) {
-        $err = "Can't remove a task for somebody you don't supervise.";
-        return false;
-    }
-    $esin = get_sin($uname);
     /* Check that there's actually a task there */
     /* Okay, update the table */
     $query = "DELETE FROM task WHERE (id = '$id')";
