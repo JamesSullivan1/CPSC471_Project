@@ -37,12 +37,13 @@ function addDetainee($uname, $pass, $fname, $lname, $birthdate, $rel_date,
         return false;
     }
     /* Okay, update the table */
-    $query = "INSERT INTO people VALUES ('$uname', SHA1('$pass'), '$fname', 
-        '$lname', '$birthdate')";
-    $result = mysqli_query($con,$query) or die(mysqli_error($con));
-    $query = "INSERT INTO detainee VALUES ('$uname', '$rel_date',
-        '$c_num', '$cs_num')"; 
-    $result = mysqli_query($con,$query) or die(mysqli_error($con));
+    $query = "INSERT INTO people VALUES ('$uname', SHA1('$pass'), '$fname',
+              '$lname', '$birthdate')";
+    mysqli_query($con,$query) or die(mysqli_error($con));
+    $query = "INSERT INTO detainee VALUES ('$uname', '$rel_date')";
+    mysqli_query($con,$query) or die(mysqli_error($con));
+    $query = "INSERT INTO livesin VALUES ('$uname', '$c_num', '$cs_num')";
+    mysqli_query($con, $query) or die(mysqli_error($con));
     return true;
 }
 
@@ -85,13 +86,16 @@ function updateDetainee($uname, $pass, $fname, $lname, $birthdate, $rel_date,
     }
 
     /* Okay, update the table */
-    $query = "UPDATE people SET uname='$uname', pass=SHA1('$pass'), 
-        fname='$fname', lname='$lname', birthdate='$birthdate'
-        WHERE uname = '$uname'";
-    $result = mysqli_query($con,$query) or die(mysqli_error($con));
-    $query = "UPDATE detainee SET uname='$uname', rel_date='$rel_date',
-        c_num='$c_num', cs_num='$cs_num' WHERE uname = '$uname'"; 
-    $result = mysqli_query($con,$query) or die(mysqli_error($con));
+    $query = "UPDATE people SET uname='$uname', pass=SHA1('$pass'),
+              fname='$fname', lname='$lname', birthdate='$birthdate'
+              WHERE uname = '$uname'";
+    mysqli_query($con,$query) or die(mysqli_error($con));
+    $query = "UPDATE detainee SET uname='$uname', rel_date='$rel_date'
+              WHERE uname = '$uname'";
+    mysqli_query($con,$query) or die(mysqli_error($con));
+    $query = "UPDATE livesin SET c_num='$c_num', cs_num='$cs_num'
+              WHERE d_uname = '$uname'";
+    mysqli_query($con, $query) or die(mysqli_error($con));
     return true;
 }
 
@@ -112,8 +116,8 @@ function removeDetainee($uname)
     }
 
     /* Check that they're actually a detainee */
-    $query = "SELECT * FROM detainee D WHERE D.uname = '$uname'";
-    $result = mysqli_query($con,$query) or die(mysqli_error($con));
+    $query = "SELECT * FROM detainee WHERE uname = '$uname'";
+    mysqli_query($con, $query) or die(mysqli_error($con));
     $count = mysqli_num_rows($result);
     if ($count != 1) {
         $err = $uname."No detainee with that username found";
@@ -121,7 +125,11 @@ function removeDetainee($uname)
     }
     /* Okay, update the table */
     $query = "DELETE FROM people WHERE uname = '$uname'";
-    $result = mysqli_query($con,$query) or die(mysqli_error($con));
+    mysqli_query($con, $query) or die(mysqli_error($con));
+    $query = "DELETE FROM detainee WHERE uname = '$uname'";
+    mysqli_query($con, $query) or die(mysqli_error($con));
+    $query = "DELETE FROM livesin WHERE d_uname = '$uname'";
+    mysqli_query($con, $query) or die(mysqli_error($con));
     return true;
 }
 
@@ -141,8 +149,8 @@ $c_num = "";
 $cs_num = "";
 if (isset($_POST['celldesc'])) {
     $split = explode(",", $_POST['celldesc']);
+    $cs_num = $split[0];
     $c_num = $split[1];
-    $c_num = $split[0];
 }
 
 if (isset($_POST['addingdetainee'])) {
