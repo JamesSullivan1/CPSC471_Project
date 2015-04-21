@@ -57,14 +57,16 @@ while (($r = $result->fetch_row())) {?>
 </td>
 <td>
 <form method="post" action="detainee_management.php">
-<input type="submit" value="EDIT" />
+<input type="submit" value="Edit" />
 <input type="hidden" name="username" value="<?php echo $r[0] ?>" />
 </form>
 </td>
+<?php } if (isEmployee($_SESSION['username'])) { ?>
 <td>
 <form method="post" action="task.php">
 <input type="submit" value="Add/Remove Tasks" />
 <input type="hidden" name="username" value="<?php echo $r[0] ?>" />
+</form>
 </td>
 <?php } ?>
 </tr>

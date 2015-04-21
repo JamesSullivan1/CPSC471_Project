@@ -36,7 +36,7 @@ $query = "SELECT * FROM works W INNER JOIN task T ON W.t_id=id
 $result = mysqli_query($con,$query) or die(mysqli_error($con));
 while (($r = $result->fetch_row())) {
     $query2 = "SELECT name FROM equipment E INNER JOIN works W ON E.t_id=W.t_id
-            WHERE d_uname = '$un'";
+            WHERE d_uname = '$un' AND E.t_id='$r[1]'";
     $result2 = mysqli_query($con,$query2) or die(mysqli_error($con));
 ?>
 <tr>
