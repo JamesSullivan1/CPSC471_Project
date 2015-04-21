@@ -27,13 +27,18 @@ $un = $_SESSION['username'];
 <center>
 <table cellpadding="5" border=1>
 <tr>
-    <th>Task ID</th><th>Desc</th><th>Start</th><th>End</th><th>Supervisor</th><th>Section</th>
+    <th>Task ID</th><th>Desc</th><th>Start</th><th>End</th><th>Supervisor</th><th>Section</th><th>Equipment</th>
 </tr>
 <?php
 global $con;
-$query = "SELECT * FROM works INNER JOIN task ON t_id=id WHERE d_uname = '$un'";
+$query = "SELECT * FROM works W INNER JOIN task T ON W.t_id=id 
+            WHERE d_uname = '$un'";
 $result = mysqli_query($con,$query) or die(mysqli_error($con));
-while (($r = $result->fetch_row())) {?>
+while (($r = $result->fetch_row())) {
+    $query2 = "SELECT name FROM equipment E INNER JOIN works W ON E.t_id=W.t_id
+            WHERE d_uname = '$un'";
+    $result2 = mysqli_query($con,$query2) or die(mysqli_error($con));
+?>
 <tr>
 <td><?php echo $r[1]  ?></td>
 <td><?php echo $r[3] ?></td>
@@ -41,6 +46,13 @@ while (($r = $result->fetch_row())) {?>
 <td><?php echo $r[5] ?></td>
 <td><?php echo $r[6] ?></td>
 <td><?php echo $r[7] ?></td>
+<td>
+<ul>
+<?php while (($r2 = $result2->fetch_row())) {
+    echo "<li> " . $r2[0] . "</li>";
+} ?>
+</ul>
+</td>
 </tr>
 <?php } ?>
 </table>
