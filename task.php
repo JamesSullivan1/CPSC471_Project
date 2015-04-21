@@ -29,7 +29,8 @@ function addTask($uname, $descr, $sdate, $edate, $s_sin, $s_num) {
         return false;
     }
     /* Verify the adder is a supervisor of addee, or they are a warden */
-    if (!supervises($cuname, $s_sin) && !isWarden($cuname)) {
+    $csin = get_sin($cuname);
+    if (!($csin == $s_sin) && !isWarden($cuname) ) {
         $err = "Can't add a task for somebody you don't supervise.";
         return false;
     }
@@ -121,12 +122,7 @@ function addEquipment($id, $name)
     if ($count != 1) {
         return false;
     }
-    $s_uname = get_name($result->fetch_row()[0]);
     /* Verify the adder is a supervisor of addee, or they are a warden */
-    if (!supervises($cuname, $s_uname) || !isWarden($cuname)) {
-        $err = "Can't add equipment for a task for somebody you don't supervise.";
-        return false;
-    }
     /* Okay, update the table */
     $query = "INSERT INTO equipment VALUES('$name', '$id')";
     mysqli_query($con,$query) or die(mysqli_error($con));
@@ -299,7 +295,7 @@ while (($task = $result->fetch_row())) {
 ?>
 </select>
 <br>
-<input type="text" name="name" value="Description:" />
+<input type="text" name="name" value="" />
 <br>
 <input type="submit" value="Add Equipment"/>
 <input type="hidden" name="addingequipment"/>
