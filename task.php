@@ -34,6 +34,11 @@ function addTask($uname, $descr, $sdate, $edate, $s_sin, $s_num) {
         return false;
     }
 
+    if ($sdate > $edate) {
+        $err = "Can't add a time paradox.";
+        return false;
+    }
+
     if (has_task_during($uname, $sdate, $edate)) {
         $err = "Detainee " . $uname . " is already working a task then.";
         return false;
@@ -91,6 +96,79 @@ function removeTask($id, $uname) {
     return true; 
 }
 
+function addEquipment($id, $name)
+{
+    global $con;
+    global $err;
+    /* Get the current user creds */
+    if (!isset($_SESSION['username'])) {
+        die();
+        return false;
+    }
+    /* Verify the credentials of the adder and addee */
+    $cuname = $_SESSION['username'];
+    $query = "SELECT * FROM task T WHERE (T.id = '$id')";
+    $result = mysqli_query($con,$query) or die(mysqli_error($con));
+    $count = mysqli_num_rows($result);
+    if ($count != 1) {
+        return false;
+    }
+    /* Retrieve the SIN of the employee on the shift */
+    $query = "SELECT s_sin FROM task INNER JOIN works ON t_id=id WHERE 
+        (id = '$id')";
+    $result = mysqli_query($con,$query) or die(mysqli_error($con));
+    $count = mysqli_num_rows($result);
+    if ($count != 1) {
+        return false;
+    }
+    $s_uname = get_name($result->fetch_row()[0]);
+    /* Verify the adder is a supervisor of addee, or they are a warden */
+    if (!supervises($cuname, $s_uname) || !isWarden($cuname)) {
+        $err = "Can't add equipment for a task for somebody you don't supervise.";
+        return false;
+    }
+    /* Okay, update the table */
+    $query = "INSERT INTO equipment VALUES('$name', '$id')";
+    mysqli_query($con,$query) or die(mysqli_error($con));
+    return true; 
+}
+
+function removeEquipment($id, $name)
+{
+    global $con;
+    global $err;
+    /* Get the current user creds */
+    if (!isset($_SESSION['username'])) {
+        die();
+        return false;
+    }
+    /* Verify the credentials of the adder and addee */
+    $cuname = $_SESSION['username'];
+    $query = "SELECT * FROM task T WHERE (T.id = '$id')";
+    $result = mysqli_query($con,$query) or die(mysqli_error($con));
+    $count = mysqli_num_rows($result);
+    if ($count != 1) {
+        return false;
+    }
+    /* Retrieve the SIN of the employee on the shift */
+    $query = "SELECT s_sin FROM task INNER JOIN works ON t_id=id WHERE 
+        (id = '$id')";
+    $result = mysqli_query($con,$query) or die(mysqli_error($con));
+    $count = mysqli_num_rows($result);
+    if ($count != 1) {
+        return false;
+    }
+    $s_uname = get_name($result->fetch_row()[0]);
+    /* Verify the adder is a supervisor of addee, or they are a warden */
+    if (!supervises($cuname, $s_uname) || !isWarden($cuname)) {
+        $err = "Can't add equipment for a task for somebody you don't supervise.";
+        return false;
+    }
+    /* Okay, update the table */
+    $query = "DELETE FROM equipment WHERE id='$id' AND name='$name'";
+    mysqli_query($con,$query) or die(mysqli_error($con));
+    return true; 
+}
 
 function has_task_during($uname, $sdate, $edate) {
     global $con;
@@ -138,7 +216,10 @@ if (isset($_POST['addingtask'])) {
     }
 } else if (isset($_POST['removingtask'])) {
     removeTask($_POST['id'], $en);
+} else if (isset($_POST['addingequipment'])) {
+    addEquipment($_POST['id'], $_POST['name']);
 }
+
 
 ?>
 <center>
@@ -154,6 +235,9 @@ if (isset($_POST['addingtask'])) {
 </td>
 <td>
 <b>Remove Task for <?php echo($en) ?></b>
+</td>
+<td>
+<b>Add Equipment </b>
 </td>
 </tr>
 <tr>
@@ -192,7 +276,7 @@ global $con;
 $query = "SELECT * FROM task INNER JOIN works ON id=t_id WHERE (d_uname = '$en')";
 $result = mysqli_query($con,$query) or die(mysqli_error($con));
 while (($task = $result->fetch_row())) {
-    echo("<option width=400px value=\"".$task[0]."\"> ".$task[2]." - ".$task[3]."</option>");
+    echo("<option width=400px value=\"".$task[0]."\"> ".$task[1]." @ ".$task[2]."</option>");
 }
 ?>
 </select>
@@ -201,6 +285,24 @@ while (($task = $result->fetch_row())) {
 <input type="hidden" name="removingtask"/>
 <input type="hidden" name="username" value="<?php echo($en) ?>"/>
 </form>
+</td>
+<td>
+<form method="post" action="task.php" >
+<select name="id" style="width:390px">
+<?php
+global $con;
+$query = "SELECT * FROM task INNER JOIN works ON id=t_id WHERE (d_uname = '$en')";
+$result = mysqli_query($con,$query) or die(mysqli_error($con));
+while (($task = $result->fetch_row())) {
+    echo("<option width=400px value=\"".$task[0]."\"> ".$task[1]." @ ".$task[2]."</option>");
+}
+?>
+</select>
+<br>
+<input type="text" name="name" value="Description:" />
+<br>
+<input type="submit" value="Add Equipment"/>
+<input type="hidden" name="addingequipment"/>
 </td>
 </tr>
 </table>
