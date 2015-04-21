@@ -31,7 +31,7 @@ $un = $_SESSION['username'];
 </tr>
 <?php
 global $con;
-$query = "SELECT * FROM works NATURAL JOIN task WHERE d_uname = '$un'";
+$query = "SELECT * FROM works INNER JOIN task ON t_id=id WHERE d_uname = '$un'";
 $result = mysqli_query($con,$query) or die(mysqli_error($con));
 while (($r = $result->fetch_row())) {?>
 <tr>
