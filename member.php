@@ -57,9 +57,10 @@ function supervises($emp1, $emp2)
     $query = "SELECT * FROM 
                 ((SELECT E.s_sin FROM employee E, people P WHERE (
                  P.uname = '$emp2' AND E.uname = P.uname)) AS t1 
-                 NATURAL JOIN 
+                 INNER JOIN 
                  (SELECT E.sin FROM employee E, people P WHERE (
                  P.uname = '$emp1' AND E.uname = P.uname)) AS t2
+                 ON t1.s_sin = t2.sin
                 )";
     $result = mysqli_query($con,$query) or die(mysqli_error($con));
     $count = mysqli_num_rows($result);

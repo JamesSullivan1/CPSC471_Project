@@ -10,7 +10,7 @@ session_start();
 require_once 'connect.php';
 require_once 'member.php';
 
-$auth = isset($_SESSION['username']) && isWarden($_SESSION['username']);
+$auth = isset($_SESSION['username']) && isEmployee($_SESSION['username']);
 if ($auth == false) {
     header("Location: nope.php");
     die();
@@ -23,8 +23,10 @@ if ($auth == false) {
 <br>
 <br>
 <center>
+<?php if (isWarden($_SESSION['username'])) {?>
 <a href="add_employee.php">Add more employees</a>
 <br>
+<?php } ?>
 <br>
 <table cellpadding="5" border=1>
 <tr>
@@ -35,7 +37,12 @@ if ($auth == false) {
 global $con;
 $query = "SELECT * FROM people NATURAL JOIN employee";
 $result = mysqli_query($con,$query) or die(mysqli_error($con));
-while (($r = $result->fetch_row())) {?>
+while (($r = $result->fetch_row())) {
+    if (!isWarden($_SESSION['username']) &&
+            !supervises($_SESSION['username'], $r[0])) {
+        continue;
+    }
+?>
 <tr>
 <td><?php echo $r[0] ?></td>
 <td><?php echo $r[3] . ", " . $r[2] ?></td>
@@ -58,12 +65,14 @@ if (mysqli_num_rows($result2) > 0) {
 <input type="hidden" name="username" value="<?php echo $r[0] ?>" />
 </form>
 </td>
+<?php } ?>
 <td>
 <form method="post" action="shift.php">
 <input type="submit" value="Edit Shifts" />
 <input type="hidden" name="username" value="<?php echo $r[0] ?>" />
 </form>
 </td>
+<?php if (isWarden($_SESSION['username'])) { ?>
 <td>
 <form method="post" action="employee_management.php">
 <input type="submit" value="EDIT" />
