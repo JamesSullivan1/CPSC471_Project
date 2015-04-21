@@ -37,8 +37,9 @@ if ($auth == false) {
 </tr>
 <?php
 global $con;
-$query = "SELECT * FROM ((SELECT * FROM people NATURAL JOIN detainee) AS T)
-    INNER JOIN livesin ON T.uname=livesin.d_uname";
+$query = "SELECT * FROM
+            ((SELECT * FROM people NATURAL JOIN detainee) AS T)
+            INNER JOIN livesin ON T.uname=livesin.d_uname";
 $result = mysqli_query($con,$query) or die(mysqli_error($con));
 while (($r = $result->fetch_row())) {?>
 <tr>
@@ -59,6 +60,11 @@ while (($r = $result->fetch_row())) {?>
 <input type="submit" value="EDIT" />
 <input type="hidden" name="username" value="<?php echo $r[0] ?>" />
 </form>
+</td>
+<td>
+<form method="post" action="task.php">
+<input type="submit" value="Add/Remove Tasks" />
+<input type="hidden" name="username" value="<?php echo $r[0] ?>" />
 </td>
 <?php } ?>
 </tr>
