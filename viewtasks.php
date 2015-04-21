@@ -10,7 +10,7 @@ session_start();
 require_once 'connect.php';
 require_once 'member.php';
 
-$auth = isset($_SESSION['username']) && !isEmployee($_SESSION['username']);
+$auth = isset($_SESSION['username']);
 if ($auth == false) {
     header("Location: nope.php");
     die();
@@ -31,9 +31,16 @@ $un = $_SESSION['username'];
 </tr>
 <?php
 global $con;
-$query = "SELECT * FROM works W INNER JOIN task T ON W.t_id=id 
-            WHERE d_uname = '$un'";
-$result = mysqli_query($con,$query) or die(mysqli_error($con));
+if !isEmployee($un) {
+    $query = "SELECT * FROM works W INNER JOIN task T ON W.t_id=id 
+                WHERE d_uname = '$un'";
+    $result = mysqli_query($con,$query) or die(mysqli_error($con));
+} else
+    $sin = get_sin($un);
+    $query = "SELECT * FROM works W INNER JOIN task T ON W.t_id=id 
+                WHERE s_sin = '$sin'";
+    $result = mysqli_query($con,$query) or die(mysqli_error($con));
+}
 while (($r = $result->fetch_row())) {
     $query2 = "SELECT name FROM equipment E INNER JOIN works W ON E.t_id=W.t_id
             WHERE d_uname = '$un' AND E.t_id='$r[1]'";

@@ -37,6 +37,9 @@ if ($auth == false) {
 <form method="post" action="myshifts.php" >
     <input type="submit" value="View My Shifts"/>
 </form>
+<form method="post" action="viewtasks.php" >
+    <input type="submit" value="View Tasks Overseen"/>
+</form>
 <form method="post" action="viewdependents.php" >
     <input type="submit" value="View Dependents"/>
     <input name="username" type="hidden" 
