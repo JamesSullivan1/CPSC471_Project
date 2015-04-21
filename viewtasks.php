@@ -2,7 +2,7 @@
     <link rel="stylesheet" href="bootstrap.css" media="screen">
     <link rel="stylesheet" type="text/css" href="jquery.datetimepicker.css"/>
     <head>
-        <title>Viewtasks</title>
+        <title>My Tasks</title>
     </head>
         <body bgcolor="#FFFFCC">
 <?php
@@ -10,8 +10,8 @@ session_start();
 require_once 'connect.php';
 require_once 'member.php';
 
-$auth = isset($_SESSION['username']) && isEmployee($_SESSION['username']) || isWarden($_SESSION['username']);
-if ($auth == true) {
+$auth = isset($_SESSION['username']) && !isEmployee($_SESSION['username']);
+if ($auth == false) {
     header("Location: nope.php");
     die();
 }
